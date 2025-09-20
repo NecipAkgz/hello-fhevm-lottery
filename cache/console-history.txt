@@ -1,0 +1,1 @@
+echo 'Contract deployment için şu komutları Hardhat console\'da çalıştırın:'
