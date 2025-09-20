@@ -200,11 +200,6 @@ npx hardhat test --grep "Lottery"
 
 ### Deployment
 ```bash
-# Local deployment
-node quick-deploy.js
-npx hardhat run scripts/deploy.js --network localhost
-npx hardhat ignition deploy ./ignition/modules/Lottery.js --network localhost
-
 # Sepolia testnet deployment
 npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
@@ -246,17 +241,6 @@ Currency: ETH
 Block Explorer: https://sepolia.etherscan.io/
 ```
 
-### Local Hardhat (Development/Optional)
-```javascript
-// hardhat.config.js
-networks: {
-  hardhat: {
-    type: "edr-simulated",
-    chainId: 1337
-  }
-}
-```
-
 ## 📊 Contract Details
 
 ### Sepolia Testnet (Production)
@@ -264,12 +248,6 @@ networks: {
 - **Ticket Price**: 0.0001 ETH (ultra-low for testing)
 - **Network**: Sepolia Testnet (Chain ID: 11155111)
 - **Etherscan**: https://sepolia.etherscan.io/address/0x78f768989C0c82BfD7E1DD68468EB1499e2C649D
-- **Gas Limit**: 500,000 per transaction
-
-### Local Hardhat (Development)
-- **Contract Address**: `0x5FbDB2315678afecb367f032d93F642f64180aa3`
-- **Ticket Price**: 0.0001 ETH (current)
-- **Network**: Local Hardhat (Chain ID: 1337)
 - **Gas Limit**: 500,000 per transaction
 
 ## 🎯 Learning Outcomes
