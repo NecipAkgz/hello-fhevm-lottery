@@ -99,6 +99,8 @@ contract ConfidentialLottery {
     address public winner;
     bool public isDrawn;
     uint256 public ticketPrice = 0.0001 ether;
+    address[] public participants;
+    address public admin;
 
     // User buys a ticket with encrypted number
     function buyTicket(uint8 _ticketNumber) external payable
@@ -109,17 +111,27 @@ contract ConfidentialLottery {
     // Winner claims prize
     function claimPrize() external
 
+    // Reset lottery for new round (admin only)
+    function resetLottery() external
+
+    // Update admin (admin only)
+    function updateAdmin(address _newAdmin) external
+
     // View functions for status
     function getMyTicket() external view returns (uint8)
+    function getBalance() external view returns (uint256)
     function getParticipantCount() external view returns (uint256)
 }
 ```
 
 **Key Features:**
-- **FHE Data Types**: Uses `euint8` for encrypted ticket numbers
+- **Admin System**: Contract deployer is admin, can reset lottery and update admin
+- **Participant Tracking**: Maintains list of all participants for fair drawing
 - **Secure Randomness**: Blockchain-based winner selection
-- **Access Control**: Only winner can claim prize
+- **Access Control**: Only winner can claim prize, only admin can reset
 - **Event Logging**: All transactions are logged
+- **Reset Functionality**: Admin can reset lottery for multiple rounds
+- **Input Validation**: Ticket numbers must be 1-100, correct payment required
 
 ### React Frontend (App.js)
 ```javascript
