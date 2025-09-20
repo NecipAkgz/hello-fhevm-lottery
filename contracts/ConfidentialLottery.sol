@@ -7,10 +7,16 @@ contract ConfidentialLottery {
     bool public isDrawn;
     uint256 public ticketPrice = 0.0001 ether;
     address[] public participants;
+    address public admin;
 
     event TicketPurchased(address indexed buyer, uint8 ticket);
     event WinnerDrawn(address indexed winner, uint8 winningNumber);
     event PrizeClaimed(address indexed winner, uint256 amount);
+    event LotteryReset(address indexed admin, uint256 timestamp);
+
+    constructor() {
+        admin = msg.sender;
+    }
 
     // User buys a ticket
     function buyTicket(uint8 _ticketNumber) external payable {
@@ -87,5 +93,27 @@ contract ConfidentialLottery {
     // Get total participant count
     function getParticipantCount() external view returns (uint256) {
         return participants.length;
+    }
+
+    // Reset lottery for new round (admin only)
+    function resetLottery() external {
+        require(msg.sender == admin, "Only admin can reset lottery");
+        require(isDrawn, "Lottery not drawn yet");
+
+        // Reset all state variables
+        isDrawn = false;
+        winner = address(0);
+
+        // Clear participants array
+        delete participants;
+
+        emit LotteryReset(msg.sender, block.timestamp);
+    }
+
+    // Update admin (admin only)
+    function updateAdmin(address _newAdmin) external {
+        require(msg.sender == admin, "Only admin can update admin");
+        require(_newAdmin != address(0), "Invalid admin address");
+        admin = _newAdmin;
     }
 }

@@ -1,6 +1,33 @@
 import React, { useState } from 'react';
 import { ethers, BrowserProvider, Contract, parseEther, formatEther } from 'ethers';
 
+/**
+ * 🎯 Confidential Lottery - FHEVM Tutorial Application
+ *
+ * This application is a confidential lottery built with Zama FHEVM technology.
+ * Users can:
+ *
+ * 🔐 CONFIDENTIAL TICKET PURCHASE:
+ * - Choose a number between 1-100
+ * - Purchase tickets for 0.0001 ETH each
+ * - Ticket numbers are stored encrypted for privacy
+ *
+ * 🎲 SECRET DRAWING:
+ * - Admin randomly selects a winner
+ * - Drawing happens securely on the blockchain
+ * - Winner address is announced to all participants
+ *
+ * 💰 PRIZE CLAIMING:
+ * - Only the winner can claim the prize
+ * - Total prize pool is transferred to winner's wallet
+ *
+ * 🌐 TECHNICAL FEATURES:
+ * - MetaMask wallet integration
+ * - Sepolia testnet deployment
+ * - Real-time status updates
+ * - Modern responsive design
+ */
+
 function App() {
   const [account, setAccount] = useState('');
   const [contract, setContract] = useState(null);
@@ -31,16 +58,18 @@ function App() {
     "function buyTicket(uint8) payable",
     "function drawWinner()",
     "function claimPrize()",
+    "function resetLottery()",
     "function getMyTicket() view returns (uint8)",
     "function getBalance() view returns (uint256)",
     "function getParticipantCount() view returns (uint256)",
     "function ticketPrice() view returns (uint256)",
     "function isDrawn() view returns (bool)",
-    "function winner() view returns (address)"
+    "function winner() view returns (address)",
+    "function admin() view returns (address)"
   ];
 
   // Contract address - Sepolia testnet
-  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x63Cf79cC631699356775d3c6b277A94D64737F18";
 
   // Switch to Sepolia network
   const switchToSepolia = async () => {
@@ -215,6 +244,31 @@ function App() {
     }
   };
 
+  // Reset lottery function
+  const resetLottery = async () => {
+    if (!contract) return;
+
+    setLoading(true);
+    setTxStatus('Resetting lottery...');
+
+    try {
+      const tx = await contract.resetLottery();
+      await tx.wait();
+
+      showToast('Lottery reset successfully! 🎯 Ready for new round!', 'success');
+
+      // Reload state
+      await loadLotteryState(contract);
+
+    } catch (error) {
+      console.error("Error resetting lottery:", error);
+      showToast('Reset failed: ' + error.message, 'error');
+    } finally {
+      setLoading(false);
+      setTxStatus('');
+    }
+  };
+
   return (
     <div className="app">
       <div className="container">
@@ -255,9 +309,32 @@ function App() {
           {!isConnected ? (
             <div className="glass-card" style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
               <h2 style={{ fontSize: '1.5rem', marginBottom: '16px' }}>Connect Your Wallet</h2>
-              <p style={{ opacity: 0.8, marginBottom: '24px' }}>
+              <p style={{ opacity: 0.8, marginBottom: '16px' }}>
                 Connect your MetaMask wallet to participate in the confidential lottery
               </p>
+
+              {/* App Description */}
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '12px',
+                padding: '16px',
+                marginBottom: '24px',
+                textAlign: 'left'
+              }}>
+                <h3 style={{ fontSize: '1rem', marginBottom: '8px', color: '#fff' }}>
+                  🎯 What is Confidential Lottery?
+                </h3>
+                <p style={{ fontSize: '0.875rem', opacity: 0.8, marginBottom: '8px' }}>
+                  A privacy-focused lottery built with Zama FHEVM technology where:
+                </p>
+                <ul style={{ fontSize: '0.875rem', opacity: 0.8, paddingLeft: '20px', marginBottom: '0' }}>
+                  <li>🎫 Buy tickets with encrypted numbers (0.0001 ETH)</li>
+                  <li>🎲 Admin draws winner randomly on blockchain</li>
+                  <li>💰 Only winner can claim the prize pool</li>
+                </ul>
+              </div>
+
               <button
                 onClick={connectWallet}
                 disabled={txStatus === 'Connecting...'}
@@ -389,15 +466,31 @@ function App() {
               <div className="glass-card" style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
                 <h2 style={{ marginBottom: '16px' }}>⚙️ Admin Functions</h2>
                 <p style={{ opacity: 0.7, marginBottom: '24px' }}>
-                  Only administrators can draw the winner
+                  Only administrators can manage the lottery
                 </p>
-                <button
-                  onClick={drawWinner}
-                  disabled={loading || lotteryState.isDrawn}
-                  className="btn btn-warning"
-                >
-                  {loading ? '🎲 Drawing...' : '🎲 Draw Winner'}
-                </button>
+
+                <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={drawWinner}
+                    disabled={loading || lotteryState.isDrawn}
+                    className="btn btn-warning"
+                  >
+                    {loading ? '🎲 Drawing...' : '🎲 Draw Winner'}
+                  </button>
+
+                  <button
+                    onClick={resetLottery}
+                    disabled={loading || !lotteryState.isDrawn}
+                    className="btn btn-secondary"
+                    style={{ background: 'linear-gradient(135deg, #6b7280, #4b5563)' }}
+                  >
+                    {loading ? '🔄 Resetting...' : '🔄 Reset Lottery'}
+                  </button>
+                </div>
+
+                <p style={{ fontSize: '0.75rem', opacity: 0.6, marginTop: '16px' }}>
+                  💡 Reset lottery after winner claims prize to start a new round
+                </p>
               </div>
 
               {/* Contract Info */}
