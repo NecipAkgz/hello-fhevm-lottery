@@ -39,8 +39,38 @@ function App() {
     "function winner() view returns (address)"
   ];
 
-  // Contract address
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  // Contract address - Sepolia testnet
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
+  // Switch to Sepolia network
+  const switchToSepolia = async () => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0xaa36a7' }], // Sepolia chain ID (11155111 in hex)
+      });
+    } catch (error) {
+      // Network mevcut değilse ekle
+      if (error.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [{
+              chainId: '0xaa36a7',
+              chainName: 'Sepolia Testnet',
+              nativeCurrency: { name: 'SepoliaETH', symbol: 'ETH', decimals: 18 },
+              rpcUrls: ['https://sepolia.infura.io/v3/54d227d3f34347b5b4ba31bbfdb83093'],
+              blockExplorerUrls: ['https://sepolia.etherscan.io/']
+            }]
+          });
+        } catch (addError) {
+          console.error("Error adding Sepolia network:", addError);
+        }
+      } else {
+        console.error("Error switching to Sepolia:", error);
+      }
+    }
+  };
 
   // Connect to MetaMask
   const connectWallet = async () => {
@@ -51,6 +81,10 @@ function App() {
 
     try {
       setTxStatus('Connecting...');
+
+      // Sepolia network'üne geç
+      await switchToSepolia();
+
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
       setAccount(accounts[0]);
       setIsConnected(true);
@@ -110,7 +144,7 @@ function App() {
 
     try {
       const tx = await contract.buyTicket(ticketNumber, {
-        value: parseEther("0.001"),
+        value: parseEther("0.0001"),
         gasLimit: 500000
       });
 
@@ -345,7 +379,7 @@ function App() {
                       disabled={loading || !ticketNumber || ticketNumber < 1 || ticketNumber > 100}
                       className="btn btn-primary"
                     >
-                      {loading ? '🎫 Purchasing...' : '🎫 Buy Ticket (0.001 ETH)'}
+                      {loading ? '🎫 Purchasing...' : '🎫 Buy Ticket (0.0001 ETH)'}
                     </button>
                   </div>
                 </div>
@@ -379,7 +413,7 @@ function App() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                   <span style={{ opacity: 0.8 }}>Network:</span>
                   <span className="badge" style={{ background: '#805ad5', padding: '2px 8px', fontSize: '0.75rem' }}>
-                    Local Hardhat
+                    Sepolia Testnet
                   </span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>

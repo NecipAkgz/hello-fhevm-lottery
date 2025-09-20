@@ -5,7 +5,7 @@ contract ConfidentialLottery {
     mapping(address => uint8) private tickets;
     address public winner;
     bool public isDrawn;
-    uint256 public ticketPrice = 0.01 ether;
+    uint256 public ticketPrice = 0.0001 ether;
     address[] public participants;
 
     event TicketPurchased(address indexed buyer, uint8 ticket);

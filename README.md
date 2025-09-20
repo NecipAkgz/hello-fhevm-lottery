@@ -25,6 +25,7 @@ This project is a **complete, working implementation** of the "Hello FHEVM" tuto
 ### Prerequisites
 - Node.js (v16+)
 - MetaMask browser extension
+- Sepolia ETH for testing (get from https://sepoliafaucet.com/)
 - Basic knowledge of Solidity and JavaScript
 
 ### Step 1: Installation
@@ -36,12 +37,15 @@ npm install
 cd frontend && npm install && cd ..
 ```
 
-### Step 2: Start Local Blockchain
+### Step 2: Configure Environment
 ```bash
-# Terminal 1: Start Hardhat local network
-npx hardhat node
+# Copy environment template
+cp .env.example .env
+
+# Edit .env file with your Infura API key
+# SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_KEY
+# PRIVATE_KEY=your_private_key_here
 ```
-✅ **Network running on**: http://127.0.0.1:8545
 
 ### Step 3: Compile Smart Contract
 ```bash
@@ -50,54 +54,39 @@ npx hardhat compile
 ```
 ✅ **Contract compiled successfully**
 
-### Step 4: Deploy Contract
+### Step 4: Deploy to Sepolia Testnet
 ```bash
-# Terminal 2: Open Hardhat console
-npx hardhat console --network localhost
+# Deploy contract to Sepolia testnet
+npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
-Run these commands in the console:
-```javascript
-// 1. Create contract factory
-const ConfidentialLottery = await ethers.getContractFactory("ConfidentialLottery");
+**✅ Contract Address**: `0x78f768989C0c82BfD7E1DD68468EB1499e2C649D`
 
-// 2. Deploy contract
-const lottery = await ConfidentialLottery.deploy();
-
-// 3. Wait for deployment
-await lottery.waitForDeployment();
-
-// 4. Get contract address
-const address = await lottery.getAddress();
-console.log('🎉 Contract deployed to:', address);
-```
-
-**✅ Contract Address**: `0x5FbDB2315678afecb367f032d93F642f64180aa3`
-
-### Step 5: Start Frontend
-```bash
-# Terminal 3: Start React development server
-cd frontend && npm start
-```
-
-### Step 6: Configure MetaMask
+### Step 5: Configure MetaMask
 1. Open MetaMask extension
 2. Click network selector (top)
-3. Click "Add Network"
-4. Enter these details:
+3. Click "Add Network" or select "Sepolia Testnet"
+4. If adding manually, enter these details:
    ```
-   Network Name: Local Hardhat
-   RPC URL: http://127.0.0.1:8545
-   Chain ID: 1337
+   Network Name: Sepolia Testnet
+   RPC URL: https://sepolia.infura.io/v3/YOUR_INFURA_KEY
+   Chain ID: 11155111
    Currency Symbol: ETH
+   Block Explorer: https://sepolia.etherscan.io/
    ```
-5. Switch to "Local Hardhat" network
-6. Import a rich account or use existing one
+5. Switch to "Sepolia Testnet" network
+6. Get Sepolia ETH from https://sepoliafaucet.com/
+
+### Step 6: Start Frontend
+```bash
+# Start React development server
+cd frontend && npm start
+```
 
 ### Step 7: Test the Application
 1. Open browser: http://localhost:3000
 2. Click "Connect Wallet"
-3. Buy ticket with number 1-100 (costs 0.001 ETH)
+3. Buy ticket with number 1-100 (costs 0.0001 ETH)
 4. Draw winner (admin function)
 5. Winner claims prize
 
@@ -109,7 +98,7 @@ contract ConfidentialLottery {
     mapping(address => uint8) private tickets;
     address public winner;
     bool public isDrawn;
-    uint256 public ticketPrice = 0.01 ether;
+    uint256 public ticketPrice = 0.0001 ether;
 
     // User buys a ticket with encrypted number
     function buyTicket(uint8 _ticketNumber) external payable
@@ -138,7 +127,7 @@ function App() {
   // Wallet connection
   const connectWallet = async () => { /* MetaMask integration */ }
 
-  // Buy ticket (0.001 ETH)
+  // Buy ticket (0.0001 ETH)
   const buyTicket = async () => { /* Contract interaction */ }
 
   // Draw winner (admin function)
@@ -161,19 +150,19 @@ function App() {
 ## 🎮 Usage Guide
 
 ### 1. Initial Setup
-- Start Hardhat node
-- Compile contract
-- Deploy contract (get address)
+- Configure environment variables
+- Compile smart contract
+- Deploy to Sepolia testnet
 - Start React frontend
 
 ### 2. MetaMask Configuration
-- Add Local Hardhat network
-- Import rich account (10,000 ETH)
+- Add Sepolia testnet network
+- Get Sepolia ETH from faucet
 - Connect to application
 
 ### 3. Lottery Flow
 1. **Connect Wallet**: Link MetaMask to dApp
-2. **Buy Ticket**: Choose number 1-100, pay 0.001 ETH
+2. **Buy Ticket**: Choose number 1-100, pay 0.0001 ETH
 3. **Wait for Participants**: Multiple users join
 4. **Draw Winner**: Admin runs random selection
 5. **Claim Prize**: Winner receives total prize pool
@@ -199,14 +188,13 @@ npx hardhat test --grep "Lottery"
 
 ### Deployment
 ```bash
-# Quick deployment
+# Local deployment
 node quick-deploy.js
-
-# Manual deployment
 npx hardhat run scripts/deploy.js --network localhost
-
-# Ignition deployment
 npx hardhat ignition deploy ./ignition/modules/Lottery.js --network localhost
+
+# Sepolia testnet deployment
+npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
 ### Development
@@ -223,7 +211,30 @@ cd frontend && npm run lint
 
 ## 🌐 Network Configuration
 
-### Local Hardhat Network
+### Sepolia Testnet (Primary)
+```javascript
+// hardhat.config.js
+networks: {
+  sepolia: {
+    url: process.env.SEPOLIA_RPC_URL,
+    accounts: [process.env.PRIVATE_KEY],
+    chainId: 11155111,
+    gasPrice: 20000000000, // 20 gwei
+    type: "http"
+  }
+}
+```
+
+### MetaMask Setup for Sepolia
+```
+Network Name: Sepolia Testnet
+RPC URL: https://sepolia.infura.io/v3/YOUR_INFURA_KEY
+Chain ID: 11155111
+Currency: ETH
+Block Explorer: https://sepolia.etherscan.io/
+```
+
+### Local Hardhat (Development/Optional)
 ```javascript
 // hardhat.config.js
 networks: {
@@ -234,18 +245,18 @@ networks: {
 }
 ```
 
-### MetaMask Setup
-```
-Network Name: Local Hardhat
-RPC URL: http://127.0.0.1:8545
-Chain ID: 1337
-Currency: ETH
-```
-
 ## 📊 Contract Details
 
+### Sepolia Testnet (Production)
+- **Contract Address**: `0x78f768989C0c82BfD7E1DD68468EB1499e2C649D`
+- **Ticket Price**: 0.0001 ETH (ultra-low for testing)
+- **Network**: Sepolia Testnet (Chain ID: 11155111)
+- **Etherscan**: https://sepolia.etherscan.io/address/0x78f768989C0c82BfD7E1DD68468EB1499e2C649D
+- **Gas Limit**: 500,000 per transaction
+
+### Local Hardhat (Development)
 - **Contract Address**: `0x5FbDB2315678afecb367f032d93F642f64180aa3`
-- **Ticket Price**: 0.001 ETH (reduced for testing)
+- **Ticket Price**: 0.0001 ETH (current)
 - **Network**: Local Hardhat (Chain ID: 1337)
 - **Gas Limit**: 500,000 per transaction
 
