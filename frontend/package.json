@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "description": "A privacy-focused lottery built with Zama FHEVM technology",
-  "homepage": "https://github.com/NecipAkgz/hello-fhevm-lottery",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
