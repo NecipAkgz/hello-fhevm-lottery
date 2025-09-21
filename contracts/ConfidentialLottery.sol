@@ -167,27 +167,4 @@ contract ConfidentialLottery {
     function getPastRoundsLength() external view returns (uint256) {
         return pastRounds.length;
     }
-
-    // Reset lottery for new round (admin only)
-    function resetLottery() external {
-        require(msg.sender == admin, "Only admin can reset lottery");
-        require(isDrawn, "Lottery not drawn yet");
-
-        // Reset all state variables
-        isDrawn = false;
-        winner = address(0);
-        lastDrawTime = block.timestamp;
-
-        // Clear participants array
-        delete participants;
-
-        emit LotteryReset(msg.sender, block.timestamp);
-    }
-
-    // Update admin (admin only)
-    function updateAdmin(address _newAdmin) external {
-        require(msg.sender == admin, "Only admin can update admin");
-        require(_newAdmin != address(0), "Invalid admin address");
-        admin = _newAdmin;
-    }
 }

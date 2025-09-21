@@ -65,7 +65,7 @@ npx hardhat compile
 npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
-**✅ Contract Address**: `0x775a2EE67f89C222BD778315cd1a18770843Ab5b`
+**✅ Contract Address**: `0x06bBCb0a34eeF521290fE7AE9e085FB9167b2B70`
 
 ### Step 5: Configure MetaMask
 1. Open MetaMask extension
@@ -131,12 +131,6 @@ contract ConfidentialLottery {
     // Claim prize from past rounds
     function claimPastPrize(uint256 _roundIndex) external
 
-    // Reset lottery for new round (admin only)
-    function resetLottery() external
-
-    // Update admin (admin only)
-    function updateAdmin(address _newAdmin) external
-
     // View functions for status
     function getMyTicket() external view returns (uint8)
     function getBalance() external view returns (uint256)
@@ -147,12 +141,10 @@ contract ConfidentialLottery {
 ```
 
 **Key Features:**
-- **Admin System**: Contract deployer is admin, can reset lottery and update admin
 - **Participant Tracking**: Maintains list of all participants for fair drawing
 - **Secure Randomness**: Blockchain-based winner selection
-- **Access Control**: Only winner can claim prize, only admin can reset
+- **Access Control**: Only winner can claim prize
 - **Event Logging**: All transactions are logged
-- **Reset Functionality**: Admin can reset lottery for multiple rounds
 - **Input Validation**: Ticket numbers must be 1-100, correct payment required
 - **Past Rounds**: All historical lottery rounds are stored and accessible
 - **Prize Claim**: Winners can claim prizes from any past round
@@ -286,10 +278,10 @@ Block Explorer: https://sepolia.etherscan.io/
 ## 📊 Contract Details
 
 ### Sepolia Testnet (Production)
-- **Contract Address**: `0x78f768989C0c82BfD7E1DD68468EB1499e2C649D`
+- **Contract Address**: `0x06bBCb0a34eeF521290fE7AE9e085FB9167b2B70`
 - **Ticket Price**: 0.0001 ETH (ultra-low for testing)
 - **Network**: Sepolia Testnet (Chain ID: 11155111)
-- **Etherscan**: https://sepolia.etherscan.io/address/0x775a2EE67f89C222BD778315cd1a18770843Ab5b
+- **Etherscan**: https://sepolia.etherscan.io/address/0x06bBCb0a34eeF521290fE7AE9e085FB9167b2B70
 - **Gas Limit**: 500,000 per transaction
 
 ## 🎯 Learning Outcomes

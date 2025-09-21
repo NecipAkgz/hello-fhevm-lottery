@@ -20,7 +20,6 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     "function buyTicket(uint8) payable",
     "function drawWinner()",
     "function claimPrize()",
-    "function resetLottery()",
     "function startNewRound()",
     "function claimPastPrize(uint256)",
     "function getMyTicket() view returns (uint8)",
@@ -67,10 +66,13 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
         contractInstance.getPastRoundsLength()
       ]);
 
+      // Convert BigInt values to numbers safely
+      const pastRoundsLengthNum = Number(pastRoundsLength);
+
       // Load last 5 past rounds
       const pastRounds = [];
-      const startIndex = pastRoundsLength > 5 ? pastRoundsLength - 5 : 0;
-      for (let i = startIndex; i < pastRoundsLength; i++) {
+      const startIndex = pastRoundsLengthNum > 5 ? pastRoundsLengthNum - 5 : 0;
+      for (let i = startIndex; i < pastRoundsLengthNum; i++) {
         try {
           const round = await contractInstance.pastRounds(i);
           pastRounds.push({
@@ -176,28 +178,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
-  // Reset lottery function
-  const resetLottery = async () => {
-    if (!contract) return;
 
-    setLoading(true);
-    setTxStatus('Resetting lottery...');
-
-    try {
-      const tx = await contract.resetLottery();
-      await tx.wait();
-
-      showToast('Lottery reset successfully! 🎯 Ready for new round!', 'success');
-      await loadLotteryState(contract);
-
-    } catch (error) {
-      console.error("Error resetting lottery:", error);
-      showToast('Reset failed: ' + error.message, 'error');
-    } finally {
-      setLoading(false);
-      setTxStatus('');
-    }
-  };
 
   // Start new round function
   const startNewRound = async () => {
@@ -263,7 +244,6 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     buyTicket,
     drawWinner,
     claimPrize,
-    resetLottery,
     startNewRound,
     claimPastPrize
   };

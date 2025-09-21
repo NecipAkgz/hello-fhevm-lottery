@@ -5,7 +5,7 @@ import WalletConnect from './components/WalletConnect';
 import LotteryStats from './components/LotteryStats';
 import BuyTicket from './components/BuyTicket';
 import WinnerDisplay from './components/WinnerDisplay';
-import AdminPanel from './components/AdminPanel';
+
 import ContractInfo from './components/ContractInfo';
 import Footer from './components/Footer';
 import ToastContainer from './components/ToastContainer';
@@ -19,7 +19,7 @@ function App() {
   const [txStatus, setTxStatus] = useState('');
 
   // Contract address - Sepolia testnet
-  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x775a2EE67f89C222BD778315cd1a18770843Ab5b";
+  const contractAddress = "0x06bBCb0a34eeF521290fE7AE9e085FB9167b2B70";
 
   const { messages, showToast } = useToast();
   const { account, isConnected, connectWallet } = useWallet(showToast, contractAddress);
@@ -30,7 +30,6 @@ function App() {
     buyTicket,
     drawWinner,
     claimPrize,
-    resetLottery,
     startNewRound,
     claimPastPrize
   } = useLottery(account, showToast, setTxStatus, contractAddress);
@@ -96,16 +95,7 @@ function App() {
                 />
               </div>
 
-              {/* Admin Panel Section */}
-              {lotteryState.isDrawn && (
-                <div className="section admin-section">
-                  <AdminPanel
-                    loading={loading}
-                    onResetLottery={resetLottery}
-                    lotteryState={lotteryState}
-                  />
-                </div>
-              )}
+
 
               {/* Contract Info Section */}
               <div className="section contract-section">
