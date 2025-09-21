@@ -95,8 +95,6 @@ function App() {
                 />
               </div>
 
-
-
               {/* Contract Info Section */}
               <div className="section contract-section">
                 <ContractInfo contractAddress={contractAddress} />
