@@ -113,16 +113,14 @@ const WalletConnect = ({ isConnected, account, onConnect, txStatus, pastRounds, 
   }
 
   return (
-    <div className="card" style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
-      <h2 style={{ fontSize: '1.25rem', marginBottom: '12px' }}>Connect Your Wallet</h2>
+    <div className="card-priority" style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
+      <h2 style={{ fontSize: '1.25rem', marginBottom: '12px', color: 'var(--primary-color)' }}>Connect Your Wallet</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
         Connect your MetaMask wallet to participate in the confidential lottery
       </p>
 
       {/* App Description */}
-      <div style={{
-        background: 'var(--card-background)',
-        border: '1px solid var(--border-color)',
+      <div className="card-secondary" style={{
         borderRadius: '8px',
         padding: '12px',
         marginBottom: '20px',
@@ -144,7 +142,8 @@ const WalletConnect = ({ isConnected, account, onConnect, txStatus, pastRounds, 
       <button
         onClick={onConnect}
         disabled={txStatus === 'Connecting...'}
-        className="btn btn-primary"
+        className={`btn ${txStatus === 'Connecting...' ? 'btn-loading' : 'btn-primary'}`}
+        style={{ minWidth: '200px' }}
       >
         {txStatus === 'Connecting...' ? '🔄 Connecting...' : '🔗 Connect MetaMask'}
       </button>

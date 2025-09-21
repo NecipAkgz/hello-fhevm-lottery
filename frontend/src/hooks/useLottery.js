@@ -167,14 +167,6 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       showToast('Prize claimed successfully! 💰', 'success');
       await loadLotteryState(contract);
 
-      // Auto reset lottery after prize claim
-      setTxStatus('Auto resetting lottery...');
-      const resetTx = await contract.resetLottery();
-      await resetTx.wait();
-
-      showToast('Lottery auto-reset! Ready for new round! 🎯', 'success');
-      await loadLotteryState(contract);
-
     } catch (error) {
       console.error("Error claiming prize:", error);
       showToast('Claim failed: ' + error.message, 'error');
@@ -219,6 +211,17 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       await tx.wait();
 
       showToast('New round started! Ready for new lottery! 🎯', 'success');
+      await loadLotteryState(contract);
+
+      // Auto buy first ticket for the round starter
+      setTxStatus('Auto purchasing your first ticket...');
+      const ticketTx = await contract.buyTicket(1, {
+        value: parseEther("0.0001"),
+        gasLimit: 500000
+      });
+      await ticketTx.wait();
+
+      showToast('First ticket purchased automatically! 🎫 You are the first participant!', 'success');
       await loadLotteryState(contract);
 
     } catch (error) {

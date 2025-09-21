@@ -53,48 +53,64 @@ function App() {
 
           <ToastContainer messages={messages} />
 
-          {!isConnected ? (
+          {/* Wallet Connection Section */}
+          <div className="section wallet-section">
             <WalletConnect
               isConnected={isConnected}
               account={account}
               onConnect={connectWallet}
               txStatus={txStatus}
+              pastRounds={lotteryState.pastRounds}
+              onClaimPastPrize={claimPastPrize}
+              loading={loading}
             />
-          ) : (
-            <>
-              <WalletConnect
-                isConnected={isConnected}
-                account={account}
-                onConnect={connectWallet}
-                txStatus={txStatus}
-                pastRounds={lotteryState.pastRounds}
-                onClaimPastPrize={claimPastPrize}
-                loading={loading}
-              />
 
-              {txStatus && (
-                <StatusMessage type="info">
-                  <strong>Transaction in progress:</strong> {txStatus}
-                </StatusMessage>
+            {isConnected && txStatus && (
+              <StatusMessage type="info">
+                <strong>Transaction in progress:</strong> {txStatus}
+              </StatusMessage>
+            )}
+          </div>
+
+          {isConnected && (
+            <>
+              {/* Lottery Stats Section */}
+              <div className="section stats-section">
+                <LotteryStats lotteryState={lotteryState} />
+              </div>
+
+              {/* Main Actions Section */}
+              <div className="section actions-section">
+                <WinnerDisplay
+                  lotteryState={lotteryState}
+                  account={account}
+                  loading={loading}
+                  onClaimPrize={claimPrize}
+                  onStartNewRound={startNewRound}
+                />
+
+                <BuyTicket
+                  lotteryState={lotteryState}
+                  loading={loading}
+                  onBuyTicket={buyTicket}
+                />
+              </div>
+
+              {/* Admin Panel Section */}
+              {lotteryState.isDrawn && (
+                <div className="section admin-section">
+                  <AdminPanel
+                    loading={loading}
+                    onResetLottery={resetLottery}
+                    lotteryState={lotteryState}
+                  />
+                </div>
               )}
 
-              <LotteryStats lotteryState={lotteryState} />
-
-              <WinnerDisplay
-                lotteryState={lotteryState}
-                account={account}
-                loading={loading}
-                onClaimPrize={claimPrize}
-                onStartNewRound={startNewRound}
-              />
-
-              <BuyTicket
-                lotteryState={lotteryState}
-                loading={loading}
-                onBuyTicket={buyTicket}
-              />
-
-              <ContractInfo contractAddress={contractAddress} />
+              {/* Contract Info Section */}
+              <div className="section contract-section">
+                <ContractInfo contractAddress={contractAddress} />
+              </div>
             </>
           )}
         </div>
