@@ -9,6 +9,9 @@ This project is a **complete, working implementation** of the "Hello FHEVM" tuto
 - [🎯 Confidential Lottery - FHEVM Tutorial](#-confidential-lottery---fhevm-tutorial)
 - [📋 Project Overview](#-project-overview)
 - [🚀 Quick Start](#-quick-start)
+  - [⚡ 5-Minute Quick Start](#-5-minute-quick-start)
+  - [🔧 Development Environment Setup](#-development-environment-setup)
+  - [🎮 Testing the Application](#-testing-the-application)
 - [🔐 FHEVM vs Traditional Lottery](#-fhevm-vs-traditional-lottery)
 - [🎯 Technical Implementation](#-technical-implementation)
 - [🎮 Usage Guide](#-usage-guide)
@@ -40,494 +43,370 @@ This project is a **complete, working implementation** of the "Hello FHEVM" tuto
 ### 🌐 Live Demo
 Try the application instantly without setup: [**Live Demo**](https://hello-fhevm-lottery.vercel.app/)
 
-### Prerequisites
+### 📋 Prerequisites
 - Node.js (v16+)
 - MetaMask browser extension
 - Sepolia ETH for testing (get from https://sepoliafaucet.com/)
 - Basic knowledge of Solidity and JavaScript
 
-### Step 1: Installation
-```bash
-# Install all dependencies
-npm install
+---
 
-# Install frontend dependencies
+## ⚡ 5-Minute Quick Start
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/NecipAkgz/hello-fhevm-lottery.git
+cd hello-fhevm-lottery
+npm install
 cd frontend && npm install && cd ..
 ```
 
-### Step 2: Configure Environment
+### 2. Environment Setup
 ```bash
-# Copy environment template
 cp .env.example .env
-
-# Edit .env file with your Infura API key
-# SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_KEY
-# PRIVATE_KEY=your_private_key_here
+# Edit .env with your Infura API key and private key
 ```
 
-### Step 3: Compile Smart Contract
+### 3. Deploy Contract
 ```bash
-# Compile the Solidity contract
 npx hardhat compile
-```
-✅ **Contract compiled successfully**
-
-### Step 4: Deploy to Sepolia Testnet
-```bash
-# Deploy contract to Sepolia testnet
 npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
-**✅ Contract Address**: `0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000`
+### 4. Start Application
+```bash
+cd frontend && npm start
+```
 
-### Step 5: Configure MetaMask
-1. Open MetaMask extension
-2. Click network selector (top)
-3. Click "Add Network" or select "Sepolia Testnet"
-4. If adding manually, enter these details:
+### 5. Test It
+1. Open http://localhost:3000
+2. Connect MetaMask to Sepolia
+3. Buy ticket (0.0001 ETH)
+4. Draw winner
+5. Claim prize
+
+**🎉 You're ready to explore FHEVM!**
+
+---
+
+## 🔧 Development Environment Setup
+
+### Environment Configuration
+Create `.env` file with your credentials:
+```bash
+# Required for Sepolia deployment
+SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_KEY
+PRIVATE_KEY=your_private_key_here
+
+# Optional: For local development
+LOCAL_RPC_URL=http://127.0.0.1:8545
+```
+
+### MetaMask Sepolia Setup
+1. Open MetaMask → Network selector → Add Network
+2. Enter these details:
    ```
    Network Name: Sepolia Testnet
    RPC URL: https://sepolia.infura.io/v3/YOUR_INFURA_KEY
    Chain ID: 11155111
-   Currency Symbol: ETH
+   Currency: ETH
    Block Explorer: https://sepolia.etherscan.io/
    ```
-5. Switch to "Sepolia Testnet" network
-6. Get Sepolia ETH from https://sepoliafaucet.com/
 
-### Step 6: Start Frontend
-```bash
-# Start React development server
-cd frontend && npm start
-```
+### Get Test ETH
+- Visit [Sepolia Faucet](https://sepoliafaucet.com/)
+- Request test ETH for your wallet
+- Minimum 0.001 ETH recommended for testing
 
-### Step 7: Test the Application
-1. Open browser: http://localhost:3000
-2. Click "Connect Wallet"
-3. Buy ticket with number 1-100 (costs 0.0001 ETH)
-4. Draw winner (admin function)
-5. Winner claims prize
+---
+
+## 🎮 Testing the Application
+
+### Basic Flow Test
+1. **Connect Wallet**: Click "Connect Wallet" button
+2. **Buy Ticket**: Choose number 1-100, pay 0.0001 ETH
+3. **Wait for Participants**: Multiple users can join
+4. **Draw Winner**: Admin function (10 min auto or manual)
+5. **Claim Prize**: Winner receives total prize pool
+
+### Contract Address
+**Sepolia Testnet**: `0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000`
+
+### Gas Estimation
+- Ticket purchase: ~150,000 gas
+- Winner draw: ~200,000 gas
+- Prize claim: ~100,000 gas
+
+**Need help?** Check the [Troubleshooting](#-troubleshooting) section below.
 
 ## 🔐 FHEVM vs Traditional Lottery
 
-This project demonstrates the revolutionary difference between **traditional blockchain applications** and **FHEVM-powered confidential applications**. We have implemented both approaches to showcase the privacy advantages of FHEVM.
+This project demonstrates the revolutionary difference between **traditional blockchain applications** and **FHEVM-powered confidential applications**.
 
-### 📊 **Feature Comparison**
+### 📊 **Core Differences**
 
-| Feature | Traditional Lottery | FHEVM Lottery |
-|---------|-------------------|----------------|
-| **Privacy Level** | ❌ **Public Exposure**<br/>Everyone sees ticket numbers | ✅ **Mathematical Privacy**<br/>Only owner knows their number |
-| **Data Security** | ⚠️ **Trust-Based**<br/>Relies on system security | 🔒 **Cryptographic Security**<br/>FHE mathematical guarantees |
-| **Winner Selection** | 🎲 **Transparent Algorithm**<br/>Public random selection | 🎲 **Encrypted Computation**<br/>Winner selected in encrypted space |
-| **Data Storage** | 📊 **Plain Text**<br/>Numbers stored as-is | 🔐 **Encrypted Storage**<br/>All data mathematically encrypted |
-| **Verification** | ✅ **Public Audit**<br/>Anyone can verify fairness | ✅ **Zero-Knowledge Proofs**<br/>Verify without revealing data |
-| **Performance** | ⚡ **Instant Transactions**<br/>Standard EVM speed | 🐌 **FHE Overhead**<br/>Additional computation time |
-| **Scalability** | 📈 **High Throughput**<br/>Standard blockchain limits | 📉 **Computational Cost**<br/>FHE encryption/decryption overhead |
+| Aspect | Traditional | FHEVM |
+|--------|-------------|-------|
+| **Privacy** | ❌ Public ticket numbers | ✅ Mathematical privacy |
+| **Security** | ⚠️ Trust-based | 🔒 Cryptographic guarantees |
+| **Data Storage** | Plain text | Encrypted computation |
+| **Performance** | ⚡ Fast | 🐌 FHE overhead |
+| **Verification** | Public audit | Zero-knowledge proofs |
 
-### 🎯 **Key Privacy Differences**
+### 🔄 **Privacy Flow Comparison**
 
-#### Traditional Lottery Flow:
+**Traditional Flow:**
 ```
-1. User selects number (e.g., 42)
-2. Number stored publicly: tickets[user] = 42
-3. Everyone can see: "User X chose 42"
-4. Winner selection: public algorithm
-5. Result: "Winner is user with number 42"
+User → Public Number → Everyone Sees → Public Winner Selection
 ```
 
-#### FHEVM Lottery Flow:
+**FHEVM Flow:**
 ```
-1. User selects number (e.g., 42)
-2. Number encrypted: tickets[user] = FHE(42)
-3. Public view: "User X has encrypted ticket"
-4. Winner selection: encrypted computation
-5. Result: "Winner is user X" (proof without revealing number)
+User → Encrypted Number → Private Storage → Encrypted Winner Selection
 ```
 
-### 🔒 **Security Advantages of FHEVM**
+### 🎯 **Key Advantages of FHEVM**
 
-- **Zero-Knowledge**: Verify lottery fairness without revealing ticket numbers
-- **Mathematical Security**: FHE provides cryptographic guarantees
-- **No Trusted Third Parties**: No need to trust the system operator
-- **Future-Proof Privacy**: Resistant to quantum computing attacks
-- **Regulatory Compliance**: Built-in privacy for sensitive applications
+- **🔒 Zero-Knowledge Verification**: Prove fairness without revealing data
+- **🛡️ Mathematical Security**: Cryptographic guarantees vs trust-based
+- **⚡ Future-Proof**: Quantum-resistant privacy
+- **📋 Regulatory Ready**: Built-in GDPR/CCPA compliance
+- **🔗 Ethereum Compatible**: Works with existing infrastructure
 
-### 🚀 **Real-World Applications**
+### 🚀 **Real-World Impact**
 
-**Traditional Lottery Use Cases:**
-- Simple gaming applications
-- Public voting systems
-- Transparent auctions
-- Standard DeFi protocols
+**Traditional Use Cases:**
+- Public auctions, transparent voting, basic gaming
 
-**FHEVM Lottery Use Cases:**
-- **Private Gaming**: Poker, lottery with true privacy
-- **Confidential Auctions**: Sealed-bid auctions
-- **Private Voting**: Anonymous voting systems
-- **Medical Data**: Privacy-preserving health data analysis
-- **Financial Privacy**: Confidential transactions
+**FHEVM Use Cases:**
+- **Private Gaming**: Poker, confidential lotteries
+- **Sealed Auctions**: Blind bidding systems
+- **Medical Privacy**: Protected health data analysis
+- **Financial Security**: Confidential transactions
 - **Identity Protection**: Private KYC processes
 
-### 🎯 **Why FHEVM Matters**
+### 💡 **Why This Matters**
 
-FHEVM represents the next evolution of blockchain technology:
-
-1. **Privacy by Default**: Applications can be private without sacrificing functionality
-2. **Regulatory Compliance**: Meet privacy requirements (GDPR, CCPA, etc.)
-3. **User Trust**: No need to trust third parties with sensitive data
-4. **Future-Proof**: Quantum-resistant cryptographic security
-5. **Interoperability**: Works with existing Ethereum infrastructure
-
-### 🔧 **Implementation Details**
-
-#### Traditional Contract (`ConfidentialLottery.sol`):
-```solidity
-mapping(address => uint8) private tickets; // Public numbers
-function buyTicket(uint8 _number) external payable // Clear text input
-```
-
-#### FHEVM Contract (`ConfidentialLotteryFHE.sol`):
-```solidity
-mapping(address => euint8) private encryptedTickets; // Encrypted storage
-function buyTicket(bytes encryptedNumber) external payable // Encrypted input
-```
+FHEVM enables **privacy by default** - applications can be confidential without sacrificing functionality, meeting regulatory requirements while maintaining user trust and future-proof security.
 
 ## 🎯 Technical Implementation
 
-### 🔧 Function-by-Function Comparison
+### 🔧 Core Technical Changes
 
-This project implements **both traditional and FHEVM approaches** to demonstrate the differences:
+This project demonstrates the key differences between traditional and FHEVM approaches:
 
-#### 📋 **Contract Structure Comparison**
+#### 📊 **Data Structure Changes**
 
+| Component | Traditional | FHEVM |
+|-----------|-------------|-------|
+| **Data Type** | `uint8` | `euint8` (encrypted) |
+| **Input** | `uint8 _number` | `bytes encryptedNumber` |
+| **Storage** | `mapping(address => uint8)` | `mapping(address => euint8)` |
+| **Return** | Plain values | Encrypted bytes |
+
+#### 🔐 **Key Function Changes**
+
+**buyTicket() Function:**
+- **Traditional**: Validates range (1-100), stores plain numbers
+- **FHEVM**: Accepts encrypted bytes, no validation needed
+
+**drawWinner() Function:**
+- **Traditional**: Returns winning number publicly
+- **FHEVM**: Returns encrypted result, preserves privacy
+
+**getMyTicket() Function:**
+- **Traditional**: Returns plain ticket number
+- **FHEVM**: Returns encrypted ticket data
+
+### 📋 **Function-by-Function Implementation Guide**
+
+#### 🎫 **buyTicket() - Ticket Purchase**
+
+**Traditional Contract:**
 ```solidity
-// ================================
-// TRADITIONAL LOTTERY CONTRACT
-// ================================
-contract ConfidentialLottery {
-    struct PastRound {
-        address winner;
-        uint256 prize;
-        uint256 drawTime;
-        bool claimed;
-    }
-
-    // Plain data storage - everyone can see ticket numbers
-    mapping(address => uint8) private tickets;
-
-    address public winner;
-    bool public isDrawn;
-    uint256 public ticketPrice = 0.0001 ether;
-    address[] public participants;
-    address public admin;
-    uint256 public lastDrawTime;
-    PastRound[] public pastRounds;
-}
-
-// ================================
-// FHEVM CONFIDENTIAL LOTTERY CONTRACT
-// ================================
-contract ConfidentialLotteryFHE is SepoliaConfig {
-    struct PastRound {
-        address winner;
-        uint256 prize;
-        uint256 drawTime;
-        bool claimed;
-    }
-
-    // Encrypted data storage - only owner knows their number
-    mapping(address => euint8) private encryptedTickets;
-
-    address public winner;
-    bool public isDrawn;
-    uint256 public ticketPrice = 0.0001 ether;
-    address[] public participants;
-    address public admin;
-    uint256 public lastDrawTime;
-    PastRound[] public pastRounds;
+function buyTicket(uint8 _ticketNumber) external payable {
+    require(_ticketNumber >= 1 && _ticketNumber <= 100);
+    tickets[msg.sender] = _ticketNumber;
+    emit TicketPurchased(msg.sender, _ticketNumber);
 }
 ```
 
-### 📊 **Function-by-Function Technical Differences**
-
-| Function | Traditional Approach | FHEVM Approach | Key Changes |
-|----------|---------------------|-----------------|-------------|
-| **buyTicket()** | `uint8 _ticketNumber` input<br/>Range validation (1-100)<br/>Plain storage | `bytes encryptedTicketNumber` input<br/>No validation<br/>Encrypted storage | Input type, validation, storage |
-| **drawWinner()** | Returns `uint8` winning number<br/>Plain computation | Returns `bytes` encrypted number<br/>Encrypted computation | Return type, data handling |
-| **getMyTicket()** | Returns `uint8`<br/>Direct access | Returns `bytes`<br/>Encrypted access | Return type, data format |
-
-#### 🎫 **buyTicket() Function - Complete Comparison**
-
+**FHEVM Contract:**
 ```solidity
-// ================================
-// TRADITIONAL APPROACH
-// ================================
-function buyTicket(uint8 _ticketNumber) external payable {
-    require(msg.value == ticketPrice, "Incorrect ticket price");
-    require(!isDrawn, "Lottery already drawn");
-
-    // 🔍 INPUT VALIDATION: Check range 1-100
-    require(_ticketNumber >= 1 && _ticketNumber <= 100, "Ticket must be between 1-100");
-
-    // 💾 PLAIN STORAGE: Store number directly
-    tickets[msg.sender] = _ticketNumber;
-
-    // 👥 PARTICIPANT TRACKING (same logic)
-    bool alreadyParticipated = false;
-    for (uint i = 0; i < participants.length; i++) {
-        if (participants[i] == msg.sender) {
-            alreadyParticipated = true;
-            break;
-        }
-    }
-    if (!alreadyParticipated) {
-        participants.push(msg.sender);
-    }
-
-    // ⏰ COUNTDOWN START (same logic)
-    if (participants.length == 1 && lastDrawTime == 0) {
-        lastDrawTime = block.timestamp;
-    }
-
-    emit TicketPurchased(msg.sender, _ticketNumber);
-}
-
-// ================================
-// FHEVM APPROACH
-// ================================
 function buyTicket(bytes calldata encryptedTicketNumber) external payable {
-    require(msg.value == ticketPrice, "Incorrect ticket price");
-    require(!isDrawn, "Lottery already drawn");
-
-    // 🔐 ENCRYPTED STORAGE: Store encrypted data
-    // No validation needed - accepts any encrypted input
     bytes32 ticketHash = keccak256(encryptedTicketNumber);
     encryptedTickets[msg.sender] = euint8.wrap(ticketHash);
-
-    // 👥 PARTICIPANT TRACKING (same logic)
-    bool alreadyParticipated = false;
-    for (uint i = 0; i < participants.length; i++) {
-        if (participants[i] == msg.sender) {
-            alreadyParticipated = true;
-            break;
-        }
-    }
-    if (!alreadyParticipated) {
-        participants.push(msg.sender);
-    }
-
-    // ⏰ COUNTDOWN START (same logic)
-    if (participants.length == 1 && lastDrawTime == 0) {
-        lastDrawTime = block.timestamp;
-    }
-
     emit TicketPurchased(msg.sender, encryptedTicketNumber);
 }
 ```
 
-#### 🎲 **drawWinner() Function - Complete Comparison**
+**Key Changes:**
+- Input: `uint8` → `bytes` (encrypted data)
+- Validation: Range checks → No validation needed
+- Storage: Plain assignment → Encrypted storage
+- Privacy: Number exposed → Number encrypted
 
+#### 🎲 **drawWinner() - Winner Selection**
+
+**Traditional Contract:**
 ```solidity
-// ================================
-// TRADITIONAL APPROACH
-// ================================
 function drawWinner() external {
-    require(!isDrawn, "Lottery already drawn");
-    require(participants.length > 0, "No participants");
-    require(msg.sender == admin || (block.timestamp >= lastDrawTime + 600), "Draw not available yet");
-
-    // 🎯 RANDOM SELECTION (same algorithm)
     uint256 randomIndex = uint256(keccak256(abi.encodePacked(
         block.timestamp, block.prevrandao, participants.length
     ))) % participants.length;
 
     winner = participants[randomIndex];
-    isDrawn = true;
-    lastDrawTime = block.timestamp;
-
-    // 💾 SAVE PAST ROUND (same logic)
-    pastRounds.push(PastRound({
-        winner: winner,
-        prize: address(this).balance,
-        drawTime: block.timestamp,
-        claimed: false
-    }));
-
-    // 🏆 ANNOUNCE WINNER: Plain number visible to all
     uint8 winningNumber = tickets[winner];
     emit WinnerDrawn(winner, winningNumber);
 }
+```
 
-// ================================
-// FHEVM APPROACH
-// ================================
+**FHEVM Contract:**
+```solidity
 function drawWinner() external {
-    require(!isDrawn, "Lottery already drawn");
-    require(participants.length > 0, "No participants");
-    require(msg.sender == admin || (block.timestamp >= lastDrawTime + 600), "Draw not available yet");
-
-    // 🎯 RANDOM SELECTION (same algorithm)
     uint256 randomIndex = uint256(keccak256(abi.encodePacked(
         block.timestamp, block.prevrandao, participants.length
     ))) % participants.length;
 
     winner = participants[randomIndex];
-    isDrawn = true;
-    lastDrawTime = block.timestamp;
-
-    // 💾 SAVE PAST ROUND (same logic)
-    pastRounds.push(PastRound({
-        winner: winner,
-        prize: address(this).balance,
-        drawTime: block.timestamp,
-        claimed: false
-    }));
-
-    // 🏆 ANNOUNCE WINNER: Encrypted number (privacy preserved)
     euint8 winningNumber = encryptedTickets[winner];
     bytes32 winningNumberHash = euint8.unwrap(winningNumber);
-    bytes memory encryptedWinningNumber = abi.encodePacked(winningNumberHash);
-    emit WinnerDrawn(winner, encryptedWinningNumber);
+    emit WinnerDrawn(winner, abi.encodePacked(winningNumberHash));
 }
 ```
 
-#### 👀 **getMyTicket() Function - Complete Comparison**
+**Key Changes:**
+- Random selection: Same algorithm (identical)
+- Winner data: Plain number → Encrypted number
+- Event emission: `uint8` → `bytes` (encrypted)
+- Privacy: Winner number exposed → Winner number hidden
 
+#### 👀 **getMyTicket() - View Personal Ticket**
+
+**Traditional Contract:**
 ```solidity
-// ================================
-// TRADITIONAL APPROACH
-// ================================
 function getMyTicket() external view returns (uint8) {
-    // 👀 DIRECT ACCESS: Return plain number
     return tickets[msg.sender];
 }
+```
 
-// ================================
-// FHEVM APPROACH
-// ================================
+**FHEVM Contract:**
+```solidity
 function getMyTicket() external view returns (bytes memory) {
-    // 🔐 ENCRYPTED ACCESS: Return encrypted data
     euint8 ticket = encryptedTickets[msg.sender];
     bytes32 ticketHash = euint8.unwrap(ticket);
     return abi.encodePacked(ticketHash);
 }
 ```
 
-### 🔑 **Key Technical Differences**
+**Key Changes:**
+- Return type: `uint8` → `bytes memory`
+- Access: Direct mapping → Encrypted mapping
+- Data format: Plain number → Encrypted bytes
+- Privacy: Anyone can see → Only owner can decrypt
+
+#### 💰 **claimPrize() - Prize Claiming**
+
+**Traditional Contract:**
+```solidity
+function claimPrize() external {
+    require(msg.sender == winner);
+    uint256 prize = address(this).balance;
+    payable(winner).transfer(prize);
+    emit PrizeClaimed(winner, prize);
+}
+```
+
+**FHEVM Contract:**
+```solidity
+function claimPrize() external {
+    require(msg.sender == winner);
+    uint256 prize = address(this).balance;
+    payable(winner).transfer(prize);
+    emit PrizeClaimed(winner, prize);
+}
+```
+
+**Key Changes:**
+- Logic: Nearly identical
+- Winner verification: Address check (same)
+- Prize transfer: Standard ETH transfer (same)
+- Event emission: Same format
+
+#### 🔄 **startNewRound() - Lottery Reset**
+
+**Traditional Contract:**
+```solidity
+function startNewRound() external {
+    isDrawn = false;
+    winner = address(0);
+    delete participants;
+    // Reset other state variables
+}
+```
+
+**FHEVM Contract:**
+```solidity
+function startNewRound() external {
+    isDrawn = false;
+    winner = address(0);
+    delete participants;
+    // Reset other state variables
+}
+```
+
+**Key Changes:**
+- Reset logic: Identical
+- State variables: Same names and types
+- Contract state: Same management approach
+- Only data types differ (plain vs encrypted)
+
+#### 🏗️ **Contract Architecture**
+
+**Traditional Contract:**
+```solidity
+contract ConfidentialLottery {
+    mapping(address => uint8) private tickets;  // Public storage
+    function buyTicket(uint8 _number) external; // Clear input
+}
+```
+
+**FHEVM Contract:**
+```solidity
+contract ConfidentialLotteryFHE is SepoliaConfig {
+    mapping(address => euint8) private encryptedTickets; // Encrypted storage
+    function buyTicket(bytes calldata encryptedNumber) external; // Encrypted input
+}
+```
+
+### 🔑 **Essential Technical Differences**
 
 - **Data Types**: `uint8` → `euint8` (encrypted integers)
-- **Input Validation**: Range checks → Removed (accepts encrypted data)
+- **Input Validation**: Range checks → Accept encrypted data
 - **Storage Pattern**: Plain mapping → Encrypted mapping
 - **Function Signatures**: `uint8` parameters → `bytes` parameters
 - **Return Types**: Plain values → Encrypted bytes
 - **Security Model**: Access control → Cryptographic security
 - **Import Requirements**: None → FHEVM libraries + SepoliaConfig
 
-### Smart Contract (ConfidentialLottery.sol)
-```solidity
-contract ConfidentialLottery {
-    struct PastRound {
-        address winner;
-        uint256 prize;
-        uint256 drawTime;
-        bool claimed;
-    }
+### 📋 **Contract Interface Comparison**
 
-    mapping(address => uint8) private tickets;
-    address public winner;
-    bool public isDrawn;
-    uint256 public ticketPrice = 0.0001 ether;
-    address[] public participants;
-    address public admin;
-    uint256 public lastDrawTime;
-    PastRound[] public pastRounds;
-
-    // User buys a ticket with encrypted number
-    function buyTicket(uint8 _ticketNumber) external payable
-
-    // Draw random winner from participants (10 min after first participant)
-    function drawWinner() external
-
-    // Winner claims prize (auto reset lottery)
-    function claimPrize() external
-
-    // Start new round immediately after draw (anyone can call)
-    function startNewRound() external
-
-    // Claim prize from past rounds
-    function claimPastPrize(uint256 _roundIndex) external
-
-    // View functions for status
-    function getMyTicket() external view returns (uint8)
-    function getBalance() external view returns (uint256)
-    function getParticipantCount() external view returns (uint256)
-    function getPastRoundsLength() external view returns (uint256)
-    function pastRounds(uint256) external view returns (address, uint256, uint256, bool)
-}
-```
-
-### Smart Contract FHEVM (ConfidentialLotteryFHE.sol)
-```solidity
-contract ConfidentialLotteryFHE is SepoliaConfig {
-    struct PastRound {
-        address winner;
-        uint256 prize;
-        uint256 drawTime;
-        bool claimed;
-    }
-
-    // FHE encrypted ticket numbers
-    mapping(address => euint8) private encryptedTickets;
-    address public winner;
-    bool public isDrawn;
-    uint256 public ticketPrice = 0.0001 ether;
-    address[] public participants;
-    address public admin;
-    uint256 public lastDrawTime;
-    PastRound[] public pastRounds;
-
-    // User buys a ticket with encrypted number
-    function buyTicket(bytes calldata encryptedTicketNumber) external payable
-
-    // Draw random winner using FHE
-    function drawWinner() external
-
-    // Winner claims prize (auto reset lottery)
-    function claimPrize() external
-
-    // Start new round immediately after draw (anyone can call)
-    function startNewRound() external
-
-    // Claim prize from past rounds
-    function claimPastPrize(uint256 _roundIndex) external
-
-    // Get user's own encrypted ticket (simplified for demo)
-    function getMyTicket() external view returns (bytes memory)
-
-    // Check contract balance
-    function getBalance() external view returns (uint256)
-
-    // Get total participant count
-    function getParticipantCount() external view returns (uint256)
-
-    // Get past rounds length
-    function getPastRoundsLength() external view returns (uint256)
-
-    // Get past round details
-    function getPastRound(uint256 _roundIndex) external view returns (address, uint256, uint256, bool)
-}
-```
+| Feature | Traditional Contract | FHEVM Contract |
+|---------|---------------------|----------------|
+| **Inheritance** | `ConfidentialLottery` | `ConfidentialLotteryFHE is SepoliaConfig` |
+| **Storage** | `mapping(address => uint8)` | `mapping(address => euint8)` |
+| **buyTicket** | `uint8 _number` | `bytes encryptedNumber` |
+| **getMyTicket** | `returns (uint8)` | `returns (bytes memory)` |
+| **Validation** | Range checks (1-100) | No validation needed |
 
 **Key Features:**
 - **Participant Tracking**: Maintains list of all participants for fair drawing
 - **Secure Randomness**: Blockchain-based winner selection
 - **Access Control**: Only winner can claim prize
 - **Event Logging**: All transactions are logged
-- **Input Validation**: Ticket numbers must be 1-100, correct payment required
-- **Past Rounds**: All historical lottery rounds are stored and accessible
+- **Past Rounds**: Complete history of all lottery rounds
 - **Prize Claim**: Winners can claim prizes from any past round
-- **Auto Reset**: Prize claim automatically starts new round
-- **Manual Reset**: Anyone can start new round immediately after draw
+- **Auto/Manual Reset**: Automatic reset on claim, manual reset after draw
 - **Time-based Draw**: 10-minute countdown after first participant joins
 
 ### Frontend Contract Integration (useLottery.js)
