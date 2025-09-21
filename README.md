@@ -4,6 +4,19 @@
 
 This project is a **complete, working implementation** of the "Hello FHEVM" tutorial for **Zama Bounty Program Season 10**. It features a fully functional confidential lottery dApp designed for beginner Web3 developers to learn FHEVM concepts.
 
+## 📋 Table of Contents
+
+- [🎯 Confidential Lottery - FHEVM Tutorial](#-confidential-lottery---fhevm-tutorial)
+- [📋 Project Overview](#-project-overview)
+- [🚀 Quick Start](#-quick-start)
+- [🔐 FHEVM vs Traditional Lottery](#-fhevm-vs-traditional-lottery)
+- [🎯 Technical Implementation](#-technical-implementation)
+- [🎮 Usage Guide](#-usage-guide)
+- [🔧 Development Commands](#-development-commands)
+- [🌐 Network Configuration](#-network-configuration)
+- [📊 Contract Details](#-contract-details)
+- [🎯 Learning Outcomes](#-learning-outcomes)
+
 ## 📋 Project Overview
 
 ### 🎯 **Bounty Objectives Achieved**
