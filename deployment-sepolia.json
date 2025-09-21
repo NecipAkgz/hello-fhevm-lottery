@@ -1,7 +1,7 @@
 {
-  "contractAddress": "0x63Cf79cC631699356775d3c6b277A94D64737F18",
+  "contractAddress": "0xb72C7aa045bB41950885E2F85e81F0448353f77e",
   "network": "sepolia",
-  "deploymentTime": "2025-09-20T22:16:49.369Z",
+  "deploymentTime": "2025-09-21T00:54:28.130Z",
   "ticketPrice": "0.0001",
-  "explorerUrl": "https://sepolia.etherscan.io/address/0x63Cf79cC631699356775d3c6b277A94D64737F18"
+  "explorerUrl": "https://sepolia.etherscan.io/address/0xb72C7aa045bB41950885E2F85e81F0448353f77e"
 }

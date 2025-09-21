@@ -65,7 +65,7 @@ npx hardhat compile
 npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
-**✅ Contract Address**: `0x78f768989C0c82BfD7E1DD68468EB1499e2C649D`
+**✅ Contract Address**: `0x775a2EE67f89C222BD778315cd1a18770843Ab5b`
 
 ### Step 5: Configure MetaMask
 1. Open MetaMask extension
@@ -100,21 +100,36 @@ cd frontend && npm start
 ### Smart Contract (ConfidentialLottery.sol)
 ```solidity
 contract ConfidentialLottery {
+    struct PastRound {
+        address winner;
+        uint256 prize;
+        uint256 drawTime;
+        bool claimed;
+    }
+
     mapping(address => uint8) private tickets;
     address public winner;
     bool public isDrawn;
     uint256 public ticketPrice = 0.0001 ether;
     address[] public participants;
     address public admin;
+    uint256 public lastDrawTime;
+    PastRound[] public pastRounds;
 
     // User buys a ticket with encrypted number
     function buyTicket(uint8 _ticketNumber) external payable
 
-    // Draw random winner from participants
+    // Draw random winner from participants (10 min after first participant)
     function drawWinner() external
 
-    // Winner claims prize
+    // Winner claims prize (auto reset lottery)
     function claimPrize() external
+
+    // Start new round immediately after draw (anyone can call)
+    function startNewRound() external
+
+    // Claim prize from past rounds
+    function claimPastPrize(uint256 _roundIndex) external
 
     // Reset lottery for new round (admin only)
     function resetLottery() external
@@ -126,6 +141,8 @@ contract ConfidentialLottery {
     function getMyTicket() external view returns (uint8)
     function getBalance() external view returns (uint256)
     function getParticipantCount() external view returns (uint256)
+    function getPastRoundsLength() external view returns (uint256)
+    function pastRounds(uint256) external view returns (address, uint256, uint256, bool)
 }
 ```
 
@@ -137,6 +154,11 @@ contract ConfidentialLottery {
 - **Event Logging**: All transactions are logged
 - **Reset Functionality**: Admin can reset lottery for multiple rounds
 - **Input Validation**: Ticket numbers must be 1-100, correct payment required
+- **Past Rounds**: All historical lottery rounds are stored and accessible
+- **Prize Claim**: Winners can claim prizes from any past round
+- **Auto Reset**: Prize claim automatically starts new round
+- **Manual Reset**: Anyone can start new round immediately after draw
+- **Time-based Draw**: 10-minute countdown after first participant joins
 
 ### React Frontend (App.js)
 ```javascript
@@ -145,24 +167,39 @@ function App() {
   const connectWallet = async () => { /* MetaMask integration */ }
 
   // Buy ticket (0.0001 ETH)
-  const buyTicket = async () => { /* Contract interaction */ }
+  const buyTicket = async (ticketNumber) => { /* Contract interaction */ }
 
-  // Draw winner (admin function)
-  const drawWinner = async () => { /* Random selection */ }
+  // Draw winner (10 min after first participant)
+  const drawWinner = async () => { /* Manual trigger after countdown */ }
 
-  // Claim prize
-  const claimPrize = async () => { /* Winner only */ }
+  // Claim prize (winner only, auto reset)
+  const claimPrize = async () => { /* Winner claims, auto reset lottery */ }
+
+  // Start new round immediately (anyone can call)
+  const startNewRound = async () => { /* Manual reset after draw */ }
+
+  // Claim past prize (from any historical round)
+  const claimPastPrize = async (roundIndex) => { /* Claim from past rounds */ }
 
   // Real-time status updates
-  const loadLotteryState = async () => { /* Live updates */ }
+  const loadLotteryState = async () => { /* Live contract state */ }
+
+  // Past rounds display
+  const pastRounds = lotteryState.pastRounds; // Historical data
 }
 ```
 
 **Key Features:**
-- **MetaMask Integration**: Full wallet connection
-- **Real-time Updates**: Live contract status
-- **Error Handling**: User-friendly error messages
-- **Responsive Design**: Mobile-compatible UI
+- **MetaMask Integration**: Full wallet connection and transaction handling
+- **Real-time Updates**: Live contract status with 1-second refresh
+- **Past Rounds**: Complete history of all lottery rounds
+- **Prize Claim**: Claim prizes from any past round
+- **Auto/Manual Reset**: Automatic reset on claim, manual reset after draw
+- **Time-based Draw**: 10-minute countdown with visual timer
+- **Error Handling**: User-friendly error messages and loading states
+- **Responsive Design**: Mobile-compatible UI with modern styling
+- **Admin Panel**: Hidden admin functions (reset, monitoring)
+- **Toast Notifications**: Real-time feedback for all actions
 
 ## 🎮 Usage Guide
 
@@ -252,7 +289,7 @@ Block Explorer: https://sepolia.etherscan.io/
 - **Contract Address**: `0x78f768989C0c82BfD7E1DD68468EB1499e2C649D`
 - **Ticket Price**: 0.0001 ETH (ultra-low for testing)
 - **Network**: Sepolia Testnet (Chain ID: 11155111)
-- **Etherscan**: https://sepolia.etherscan.io/address/0x78f768989C0c82BfD7E1DD68468EB1499e2C649D
+- **Etherscan**: https://sepolia.etherscan.io/address/0x775a2EE67f89C222BD778315cd1a18770843Ab5b
 - **Gas Limit**: 500,000 per transaction
 
 ## 🎯 Learning Outcomes

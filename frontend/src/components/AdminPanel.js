@@ -8,14 +8,6 @@ const AdminPanel = ({ loading, onDrawWinner, onResetLottery, lotteryState }) => 
 
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
         <button
-          onClick={onDrawWinner}
-          disabled={loading || lotteryState.isDrawn}
-          className="btn btn-warning"
-        >
-          {loading ? '🎲 Drawing...' : '🎲 Draw Winner'}
-        </button>
-
-        <button
           onClick={onResetLottery}
           disabled={loading || !lotteryState.isDrawn}
           className="btn btn-secondary"
@@ -25,7 +17,7 @@ const AdminPanel = ({ loading, onDrawWinner, onResetLottery, lotteryState }) => 
       </div>
 
       <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '16px' }}>
-        💡 Reset lottery after winner claims prize to start a new round
+        � Reset lottery after winner claims prize to start a new round
       </p>
     </div>
   );

@@ -6,6 +6,7 @@ import LotteryStats from './components/LotteryStats';
 import BuyTicket from './components/BuyTicket';
 import WinnerDisplay from './components/WinnerDisplay';
 import AdminPanel from './components/AdminPanel';
+import PastRounds from './components/PastRounds';
 import ContractInfo from './components/ContractInfo';
 import Footer from './components/Footer';
 import ToastContainer from './components/ToastContainer';
@@ -19,7 +20,7 @@ function App() {
   const [txStatus, setTxStatus] = useState('');
 
   // Contract address - Sepolia testnet
-  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x63Cf79cC631699356775d3c6b277A94D64737F18";
+  const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS || "0x775a2EE67f89C222BD778315cd1a18770843Ab5b";
 
   const { messages, showToast } = useToast();
   const { account, isConnected, connectWallet } = useWallet(showToast, contractAddress);
@@ -30,8 +31,20 @@ function App() {
     buyTicket,
     drawWinner,
     claimPrize,
-    resetLottery
+    resetLottery,
+    startNewRound,
+    claimPastPrize
   } = useLottery(account, showToast, setTxStatus, contractAddress);
+
+  // Listen for draw winner event
+  React.useEffect(() => {
+    const handleDrawWinner = () => {
+      drawWinner();
+    };
+
+    window.addEventListener('drawWinner', handleDrawWinner);
+    return () => window.removeEventListener('drawWinner', handleDrawWinner);
+  }, [drawWinner]);
 
   return (
     <div className="app">
@@ -57,6 +70,13 @@ function App() {
                 txStatus={txStatus}
               />
 
+              <PastRounds
+                pastRounds={lotteryState.pastRounds}
+                account={account}
+                onClaimPastPrize={claimPastPrize}
+                loading={loading}
+              />
+
               {txStatus && (
                 <StatusMessage type="info">
                   <strong>Transaction in progress:</strong> {txStatus}
@@ -70,19 +90,13 @@ function App() {
                 account={account}
                 loading={loading}
                 onClaimPrize={claimPrize}
+                onStartNewRound={startNewRound}
               />
 
               <BuyTicket
                 lotteryState={lotteryState}
                 loading={loading}
                 onBuyTicket={buyTicket}
-              />
-
-              <AdminPanel
-                loading={loading}
-                onDrawWinner={drawWinner}
-                onResetLottery={resetLottery}
-                lotteryState={lotteryState}
               />
 
               <ContractInfo contractAddress={contractAddress} />

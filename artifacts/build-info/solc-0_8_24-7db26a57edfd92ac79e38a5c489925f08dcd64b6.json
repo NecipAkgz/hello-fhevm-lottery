@@ -1,0 +1,35 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_24-7db26a57edfd92ac79e38a5c489925f08dcd64b6",
+  "solcVersion": "0.8.24",
+  "solcLongVersion": "0.8.24+commit.e11b9ed9",
+  "userSourceNameMap": {
+    "contracts/ConfidentialLottery.sol": "project/contracts/ConfidentialLottery.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "shanghai",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/ConfidentialLottery.sol": {
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\n\ncontract ConfidentialLottery {\n    struct PastRound {\n        address winner;\n        uint256 prize;\n        uint256 drawTime;\n        bool claimed;\n    }\n\n    mapping(address => uint8) private tickets;\n    address public winner;\n    bool public isDrawn;\n    uint256 public ticketPrice = 0.0001 ether;\n    address[] public participants;\n    address public admin;\n    uint256 public lastDrawTime;\n    PastRound[] public pastRounds;\n\n    event TicketPurchased(address indexed buyer, uint8 ticket);\n    event WinnerDrawn(address indexed winner, uint8 winningNumber);\n    event PrizeClaimed(address indexed winner, uint256 amount);\n    event LotteryReset(address indexed admin, uint256 timestamp);\n\n    constructor() {\n        admin = msg.sender;\n    }\n\n    // User buys a ticket\n    function buyTicket(uint8 _ticketNumber) external payable {\n        require(msg.value == ticketPrice, \"Incorrect ticket price\");\n        require(!isDrawn, \"Lottery already drawn\");\n        require(\n            _ticketNumber >= 1 && _ticketNumber <= 100,\n            \"Ticket must be between 1-100\"\n        );\n\n        tickets[msg.sender] = _ticketNumber;\n\n        // Add participant to list (to keep winner secret until drawing)\n        bool alreadyParticipated = false;\n        for (uint i = 0; i < participants.length; i++) {\n            if (participants[i] == msg.sender) {\n                alreadyParticipated = true;\n                break;\n            }\n        }\n        if (!alreadyParticipated) {\n            participants.push(msg.sender);\n        }\n\n        // Start countdown when first participant joins\n        if (participants.length == 1 && lastDrawTime == 0) {\n            lastDrawTime = block.timestamp;\n        }\n\n        emit TicketPurchased(msg.sender, _ticketNumber);\n    }\n\n    // Draw random winner\n    function drawWinner() external {\n        require(!isDrawn, \"Lottery already drawn\");\n        require(participants.length > 0, \"No participants\");\n        require(\n            msg.sender == admin || (block.timestamp >= lastDrawTime + 600),\n            \"Draw not available yet or not admin\"\n        );\n\n        // Select random winner\n        uint256 randomIndex = uint256(\n            keccak256(\n                abi.encodePacked(\n                    block.timestamp,\n                    block.prevrandao,\n                    participants.length\n                )\n            )\n        ) % participants.length;\n        winner = participants[randomIndex];\n\n        isDrawn = true;\n        lastDrawTime = block.timestamp;\n\n        // Save to past rounds\n        pastRounds.push(\n            PastRound({\n                winner: winner,\n                prize: address(this).balance,\n                drawTime: block.timestamp,\n                claimed: false\n            })\n        );\n\n        // Announce winner\n        uint8 winningNumber = tickets[winner];\n        emit WinnerDrawn(winner, winningNumber);\n    }\n\n    // Start new round (anyone can call after draw)\n    function startNewRound() external {\n        require(isDrawn, \"Lottery not drawn yet\");\n\n        // Reset all state variables\n        isDrawn = false;\n        winner = address(0);\n        lastDrawTime = block.timestamp;\n\n        // Clear participants array\n        delete participants;\n\n        emit LotteryReset(msg.sender, block.timestamp);\n    }\n\n    // Winner claims prize\n    function claimPrize() external {\n        require(isDrawn, \"Lottery not drawn yet\");\n        require(msg.sender == winner, \"Not the winner\");\n\n        uint256 prize = address(this).balance;\n        require(prize > 0, \"No prize to claim\");\n\n        payable(winner).transfer(prize);\n\n        // Mark as claimed in past rounds\n        if (pastRounds.length > 0) {\n            pastRounds[pastRounds.length - 1].claimed = true;\n        }\n\n        emit PrizeClaimed(winner, prize);\n    }\n\n    // Claim prize from past rounds\n    function claimPastPrize(uint256 _roundIndex) external {\n        require(_roundIndex < pastRounds.length, \"Invalid round index\");\n        require(\n            msg.sender == pastRounds[_roundIndex].winner,\n            \"Not the winner of this round\"\n        );\n        require(!pastRounds[_roundIndex].claimed, \"Prize already claimed\");\n\n        uint256 prize = pastRounds[_roundIndex].prize;\n        require(prize > 0, \"No prize to claim\");\n\n        pastRounds[_roundIndex].claimed = true;\n        payable(msg.sender).transfer(prize);\n\n        emit PrizeClaimed(msg.sender, prize);\n    }\n\n    // Get user's own ticket\n    function getMyTicket() external view returns (uint8) {\n        return tickets[msg.sender];\n    }\n\n    // Check contract balance\n    function getBalance() external view returns (uint256) {\n        return address(this).balance;\n    }\n\n    // Get total participant count\n    function getParticipantCount() external view returns (uint256) {\n        return participants.length;\n    }\n\n    // Get past rounds length\n    function getPastRoundsLength() external view returns (uint256) {\n        return pastRounds.length;\n    }\n\n    // Reset lottery for new round (admin only)\n    function resetLottery() external {\n        require(msg.sender == admin, \"Only admin can reset lottery\");\n        require(isDrawn, \"Lottery not drawn yet\");\n\n        // Reset all state variables\n        isDrawn = false;\n        winner = address(0);\n        lastDrawTime = block.timestamp;\n\n        // Clear participants array\n        delete participants;\n\n        emit LotteryReset(msg.sender, block.timestamp);\n    }\n\n    // Update admin (admin only)\n    function updateAdmin(address _newAdmin) external {\n        require(msg.sender == admin, \"Only admin can update admin\");\n        require(_newAdmin != address(0), \"Invalid admin address\");\n        admin = _newAdmin;\n    }\n}\n"
+      }
+    }
+  }
+}

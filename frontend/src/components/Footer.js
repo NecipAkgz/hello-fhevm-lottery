@@ -4,6 +4,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-text">
           <p>Built with ❤️ using React & FHEVM</p>
+          <p>Discord username: _crokxy</p>
         </div>
         <div className="footer-links">
           <a

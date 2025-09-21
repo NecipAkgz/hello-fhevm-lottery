@@ -1,4 +1,4 @@
-const WinnerDisplay = ({ lotteryState, account, loading, onClaimPrize }) => {
+const WinnerDisplay = ({ lotteryState, account, loading, onClaimPrize, onStartNewRound }) => {
   if (!lotteryState.isDrawn) return null;
 
   return (
@@ -28,7 +28,17 @@ const WinnerDisplay = ({ lotteryState, account, loading, onClaimPrize }) => {
           </button>
         </div>
       ) : (
-        <p style={{ color: 'var(--text-secondary)' }}>Better luck next time! 🎯</p>
+        <div>
+          <p style={{ color: 'var(--text-secondary)' }}>Better luck next time! 🎯</p>
+          <button
+            onClick={onStartNewRound}
+            disabled={loading}
+            className="btn btn-secondary"
+            style={{ marginTop: '8px', fontSize: '0.75rem' }}
+          >
+            🔄 Start New Round
+          </button>
+        </div>
       )}
     </div>
   );
