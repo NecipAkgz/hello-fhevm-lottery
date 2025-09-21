@@ -15,7 +15,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
   });
   const [loading, setLoading] = useState(false);
 
-  // Contract ABI
+  // Contract ABI for ConfidentialLottery
   const contractABI = [
     "function buyTicket(uint8) payable",
     "function drawWinner()",
@@ -31,7 +31,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     "function admin() view returns (address)",
     "function lastDrawTime() view returns (uint256)",
     "function getPastRoundsLength() view returns (uint256)",
-    "function pastRounds(uint256) view returns (address, uint256, uint256, bool)"
+    "function getPastRound(uint256) view returns (address, uint256, uint256, bool)"
   ];
 
   // Initialize contract when account is available
@@ -74,7 +74,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       const startIndex = pastRoundsLengthNum > 5 ? pastRoundsLengthNum - 5 : 0;
       for (let i = startIndex; i < pastRoundsLengthNum; i++) {
         try {
-          const round = await contractInstance.pastRounds(i);
+          const round = await contractInstance.getPastRound(i);
           pastRounds.push({
             winner: round[0],
             prize: formatEther(round[1]),
@@ -113,6 +113,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     setTxStatus('Purchasing ticket...');
 
     try {
+      // Send ticket number directly as uint8
       const tx = await contract.buyTicket(ticketNumber, {
         value: parseEther("0.0001"),
         gasLimit: 500000
@@ -196,6 +197,8 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
 
       // Auto buy first ticket for the round starter
       setTxStatus('Auto purchasing your first ticket...');
+
+      // Send ticket number 1 directly as uint8
       const ticketTx = await contract.buyTicket(1, {
         value: parseEther("0.0001"),
         gasLimit: 500000

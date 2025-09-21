@@ -1,3 +1,8 @@
+console.log("Deployed to:", lottery.address);
+await lottery.deployed();
+const lottery = await ConfidentialLotteryFHE.deploy();
+const ConfidentialLotteryFHE = await ethers.getContractFactory("ConfidentialLotteryFHE");
+const [deployer] = await ethers.getSigners();
 const ConfidentialLottery = await ethers.getContractFactory("ConfidentialLottery");
 console.log("Deployed to:", address);
 const address = await lottery.getAddress();

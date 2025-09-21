@@ -1,0 +1,1032 @@
+{
+  "version": "3.4",
+  "log": [
+    {
+      "@fhevm/solidity/config/ZamaConfig.sol:EthereumConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:72",
+        "version": {
+          "withMetadata": "9eeaac7e8debfe403e8868c756421d72264a8551149730bf1897fe08021ba10e",
+          "withoutMetadata": "cb2185c21226c81c10b0cf1fd923b539d23414fa6ef918e9fb3fafafaebcd6b8",
+          "linkedWithoutMetadata": "cb2185c21226c81c10b0cf1fd923b539d23414fa6ef918e9fb3fafafaebcd6b8"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/FHE.sol:FHE",
+          "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig"
+        ],
+        "methods": [
+          "()",
+          "protocolId()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "EthereumConfig",
+            "src": "@fhevm/solidity/config/ZamaConfig.sol:73"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/config/ZamaConfig.sol:SepoliaConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:55",
+        "version": {
+          "withMetadata": "ada5a0444ded9aa561848dcb11bef529c194cbfcc4e229ba7576719b70168f7e",
+          "withoutMetadata": "cd10e7b0f53ee2279d671eb24b977a12e05d9429a7a14233ef61634c204d74b9",
+          "linkedWithoutMetadata": "cd10e7b0f53ee2279d671eb24b977a12e05d9429a7a14233ef61634c204d74b9"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/FHE.sol:FHE",
+          "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig"
+        ],
+        "methods": [
+          "()",
+          "protocolId()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "SepoliaConfig",
+            "src": "@fhevm/solidity/config/ZamaConfig.sol:56"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:14",
+        "version": {
+          "withMetadata": "8503363d092fcb00db1d22b6cab30dd2bf72d03c685a6120aab4c6bd88e4524c",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:FHE": {
+        "src": "@fhevm/solidity/lib/FHE.sol:38",
+        "version": {
+          "withMetadata": "fa265d299155391eb0c257500aafe12f96082744cf8086dffe287701bfd93219",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/Impl.sol:Impl"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:IDecryptionOracle": {
+        "src": "@fhevm/solidity/lib/FHE.sol:25",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "requestDecryption(uint256,bytes32[],bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:IKMSVerifier": {
+        "src": "@fhevm/solidity/lib/FHE.sol:13",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "verifyDecryptionEIP712KMSSignatures(bytes32[],bytes,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IACL": {
+        "src": "@fhevm/solidity/lib/Impl.sol:292",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "allowTransient(bytes32,address)",
+          "allow(bytes32,address)",
+          "cleanTransientStorage()",
+          "isAllowed(bytes32,address)",
+          "allowForDecryption(bytes32[])",
+          "isAllowedForDecryption(bytes32)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IFHEVMExecutor": {
+        "src": "@fhevm/solidity/lib/Impl.sol:31",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "fheAdd(bytes32,bytes32,bytes1)",
+          "fheSub(bytes32,bytes32,bytes1)",
+          "fheMul(bytes32,bytes32,bytes1)",
+          "fheDiv(bytes32,bytes32,bytes1)",
+          "fheRem(bytes32,bytes32,bytes1)",
+          "fheBitAnd(bytes32,bytes32,bytes1)",
+          "fheBitOr(bytes32,bytes32,bytes1)",
+          "fheBitXor(bytes32,bytes32,bytes1)",
+          "fheShl(bytes32,bytes32,bytes1)",
+          "fheShr(bytes32,bytes32,bytes1)",
+          "fheRotl(bytes32,bytes32,bytes1)",
+          "fheRotr(bytes32,bytes32,bytes1)",
+          "fheEq(bytes32,bytes32,bytes1)",
+          "fheNe(bytes32,bytes32,bytes1)",
+          "fheGe(bytes32,bytes32,bytes1)",
+          "fheGt(bytes32,bytes32,bytes1)",
+          "fheLe(bytes32,bytes32,bytes1)",
+          "fheLt(bytes32,bytes32,bytes1)",
+          "fheMin(bytes32,bytes32,bytes1)",
+          "fheMax(bytes32,bytes32,bytes1)",
+          "fheNeg(bytes32)",
+          "fheNot(bytes32)",
+          "verifyCiphertext(bytes32,address,bytes,uint8)",
+          "cast(bytes32,uint8)",
+          "trivialEncrypt(uint256,uint8)",
+          "fheIfThenElse(bytes32,bytes32,bytes32)",
+          "fheRand(uint8)",
+          "fheRandBounded(uint256,uint8)",
+          "getInputVerifierAddress()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IInputVerifier": {
+        "src": "@fhevm/solidity/lib/Impl.sol:344",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "cleanTransientStorage()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:Impl": {
+        "src": "@fhevm/solidity/lib/Impl.sol:356",
+        "version": {
+          "withMetadata": "ea64187cffe10ef54feeacff5db4ed43df05ae98328e0c1413b2ab13795fea87",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "contracts/ConfidentialLotteryFHE.sol:ConfidentialLotteryFHE": {
+        "src": "contracts/ConfidentialLotteryFHE.sol:7",
+        "version": {
+          "withMetadata": "24eb0d94a60c95e2bc62b136b17decc63ea2fd352286e1c54640c71a3b88ff23",
+          "withoutMetadata": "f64a3870a3ce417c3c58dd86d7622f0f98a728daf5918dbbca24fe107a7e56c8",
+          "linkedWithoutMetadata": "f64a3870a3ce417c3c58dd86d7622f0f98a728daf5918dbbca24fe107a7e56c8"
+        },
+        "inherit": [
+          "@fhevm/solidity/config/ZamaConfig.sol:SepoliaConfig"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "buyTicket(bytes)",
+          "drawWinner()",
+          "startNewRound()",
+          "claimPrize()",
+          "claimPastPrize(uint256)",
+          "getMyTicket()",
+          "getBalance()",
+          "getParticipantCount()",
+          "getPastRoundsLength()",
+          "getPastRound(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ConfidentialLotteryFHE",
+            "src": "contracts/ConfidentialLotteryFHE.sol:30"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "ticketPrice",
+            "src": "contracts/ConfidentialLotteryFHE.sol:19"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "encryptedTickets",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_userDefinedValueType(euint8)39603)",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:16"
+            },
+            {
+              "label": "winner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:17"
+            },
+            {
+              "label": "isDrawn",
+              "offset": 20,
+              "slot": "1",
+              "type": "t_bool",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:18"
+            },
+            {
+              "label": "ticketPrice",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:19"
+            },
+            {
+              "label": "participants",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_array(t_address)dyn_storage",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:20"
+            },
+            {
+              "label": "admin",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_address",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:21"
+            },
+            {
+              "label": "lastDrawTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:22"
+            },
+            {
+              "label": "pastRounds",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_array(t_struct(PastRound)39044_storage)dyn_storage",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:23"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_struct(PastRound)39044_storage)dyn_storage": {
+              "label": "struct ConfidentialLotteryFHE.PastRound[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_userDefinedValueType(euint8)39603)": {
+              "label": "mapping(address => euint8)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PastRound)39044_storage": {
+              "label": "struct ConfidentialLotteryFHE.PastRound",
+              "members": [
+                {
+                  "label": "winner",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "prize",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "drawTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "claimed",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "3"
+                }
+              ],
+              "numberOfBytes": "128"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_userDefinedValueType(euint8)39603": {
+              "label": "euint8",
+              "numberOfBytes": "32",
+              "underlying": "t_bytes32"
+            },
+            "t_bytes32": {
+              "label": "bytes32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      }
+    },
+    {
+      "@fhevm/solidity/config/ZamaConfig.sol:EthereumConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:72",
+        "version": {
+          "withMetadata": "7a0c0d7158f695825a8f5a877a9673fe7cbed91678f91f6f6e169b556d38514b",
+          "withoutMetadata": "cb2185c21226c81c10b0cf1fd923b539d23414fa6ef918e9fb3fafafaebcd6b8",
+          "linkedWithoutMetadata": "cb2185c21226c81c10b0cf1fd923b539d23414fa6ef918e9fb3fafafaebcd6b8"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/FHE.sol:FHE",
+          "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig"
+        ],
+        "methods": [
+          "()",
+          "protocolId()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "EthereumConfig",
+            "src": "@fhevm/solidity/config/ZamaConfig.sol:73"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/config/ZamaConfig.sol:SepoliaConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:55",
+        "version": {
+          "withMetadata": "370a327263fe1883a2358ae602ffe06b0421f875fbd4fc077205ec4f2a013b10",
+          "withoutMetadata": "d658d81b6d9803af2d31e593515cc76291a762ef129a66be3f78b5802228717a",
+          "linkedWithoutMetadata": "d658d81b6d9803af2d31e593515cc76291a762ef129a66be3f78b5802228717a"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/FHE.sol:FHE",
+          "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig"
+        ],
+        "methods": [
+          "()",
+          "protocolId()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "SepoliaConfig",
+            "src": "@fhevm/solidity/config/ZamaConfig.sol:56"
+          }
+        ],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/config/ZamaConfig.sol:ZamaConfig": {
+        "src": "@fhevm/solidity/config/ZamaConfig.sol:14",
+        "version": {
+          "withMetadata": "4eaa61de40ab3ad37788173d76c8ce82bc3cff12f1cb8d10078931523a896f16",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:FHE": {
+        "src": "@fhevm/solidity/lib/FHE.sol:38",
+        "version": {
+          "withMetadata": "fa265d299155391eb0c257500aafe12f96082744cf8086dffe287701bfd93219",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [
+          "@fhevm/solidity/lib/Impl.sol:Impl"
+        ],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:IDecryptionOracle": {
+        "src": "@fhevm/solidity/lib/FHE.sol:25",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "requestDecryption(uint256,bytes32[],bytes4)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/FHE.sol:IKMSVerifier": {
+        "src": "@fhevm/solidity/lib/FHE.sol:13",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "verifyDecryptionEIP712KMSSignatures(bytes32[],bytes,bytes)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IACL": {
+        "src": "@fhevm/solidity/lib/Impl.sol:292",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "allowTransient(bytes32,address)",
+          "allow(bytes32,address)",
+          "cleanTransientStorage()",
+          "isAllowed(bytes32,address)",
+          "allowForDecryption(bytes32[])",
+          "isAllowedForDecryption(bytes32)"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IFHEVMExecutor": {
+        "src": "@fhevm/solidity/lib/Impl.sol:31",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "fheAdd(bytes32,bytes32,bytes1)",
+          "fheSub(bytes32,bytes32,bytes1)",
+          "fheMul(bytes32,bytes32,bytes1)",
+          "fheDiv(bytes32,bytes32,bytes1)",
+          "fheRem(bytes32,bytes32,bytes1)",
+          "fheBitAnd(bytes32,bytes32,bytes1)",
+          "fheBitOr(bytes32,bytes32,bytes1)",
+          "fheBitXor(bytes32,bytes32,bytes1)",
+          "fheShl(bytes32,bytes32,bytes1)",
+          "fheShr(bytes32,bytes32,bytes1)",
+          "fheRotl(bytes32,bytes32,bytes1)",
+          "fheRotr(bytes32,bytes32,bytes1)",
+          "fheEq(bytes32,bytes32,bytes1)",
+          "fheNe(bytes32,bytes32,bytes1)",
+          "fheGe(bytes32,bytes32,bytes1)",
+          "fheGt(bytes32,bytes32,bytes1)",
+          "fheLe(bytes32,bytes32,bytes1)",
+          "fheLt(bytes32,bytes32,bytes1)",
+          "fheMin(bytes32,bytes32,bytes1)",
+          "fheMax(bytes32,bytes32,bytes1)",
+          "fheNeg(bytes32)",
+          "fheNot(bytes32)",
+          "verifyCiphertext(bytes32,address,bytes,uint8)",
+          "cast(bytes32,uint8)",
+          "trivialEncrypt(uint256,uint8)",
+          "fheIfThenElse(bytes32,bytes32,bytes32)",
+          "fheRand(uint8)",
+          "fheRandBounded(uint256,uint8)",
+          "getInputVerifierAddress()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:IInputVerifier": {
+        "src": "@fhevm/solidity/lib/Impl.sol:344",
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "cleanTransientStorage()"
+        ],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "@fhevm/solidity/lib/Impl.sol:Impl": {
+        "src": "@fhevm/solidity/lib/Impl.sol:356",
+        "version": {
+          "withMetadata": "ea64187cffe10ef54feeacff5db4ed43df05ae98328e0c1413b2ab13795fea87",
+          "withoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312",
+          "linkedWithoutMetadata": "aef8899eac78fba7080b09fc141bbd85fea7f379041e693bd8f5e5e8ddf44312"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [],
+        "linkReferences": [],
+        "errors": [],
+        "layout": {
+          "storage": [],
+          "types": {},
+          "layoutVersion": "1.2",
+          "flat": false,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "contracts/ConfidentialLottery.sol:ConfidentialLottery": {
+        "src": "contracts/ConfidentialLottery.sol:4",
+        "version": {
+          "withMetadata": "7faac689e031d45f80af8af3c808fcea78aa03748f19a261ba9c40b87d7cdfef",
+          "withoutMetadata": "62ec7472fd00df0f6819fd3a067decffeb7df098919501a84860a6974f97bba0",
+          "linkedWithoutMetadata": "62ec7472fd00df0f6819fd3a067decffeb7df098919501a84860a6974f97bba0"
+        },
+        "inherit": [],
+        "libraries": [],
+        "methods": [
+          "()",
+          "buyTicket(uint8)",
+          "drawWinner()",
+          "startNewRound()",
+          "claimPrize()",
+          "claimPastPrize(uint256)",
+          "getMyTicket()",
+          "getBalance()",
+          "getParticipantCount()",
+          "getPastRoundsLength()"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ConfidentialLottery",
+            "src": "contracts/ConfidentialLottery.sol:26"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "ticketPrice",
+            "src": "contracts/ConfidentialLottery.sol:15"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "tickets",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_uint8)",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:12"
+            },
+            {
+              "label": "winner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:13"
+            },
+            {
+              "label": "isDrawn",
+              "offset": 20,
+              "slot": "1",
+              "type": "t_bool",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:14"
+            },
+            {
+              "label": "ticketPrice",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:15"
+            },
+            {
+              "label": "participants",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_array(t_address)dyn_storage",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:16"
+            },
+            {
+              "label": "admin",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_address",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:17"
+            },
+            {
+              "label": "lastDrawTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:18"
+            },
+            {
+              "label": "pastRounds",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_array(t_struct(PastRound)39036_storage)dyn_storage",
+              "contract": "ConfidentialLottery",
+              "src": "contracts/ConfidentialLottery.sol:19"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_struct(PastRound)39036_storage)dyn_storage": {
+              "label": "struct ConfidentialLottery.PastRound[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_uint8)": {
+              "label": "mapping(address => uint8)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PastRound)39036_storage": {
+              "label": "struct ConfidentialLottery.PastRound",
+              "members": [
+                {
+                  "label": "winner",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "prize",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "drawTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "claimed",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "3"
+                }
+              ],
+              "numberOfBytes": "128"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_uint8": {
+              "label": "uint8",
+              "numberOfBytes": "1"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      },
+      "contracts/ConfidentialLotteryFHE.sol:ConfidentialLotteryFHE": {
+        "src": "contracts/ConfidentialLotteryFHE.sol:7",
+        "version": {
+          "withMetadata": "83deee879a4f971c39e891965d46dd8aee051a78f30231acdbc0a026349774d0",
+          "withoutMetadata": "28bc9d905043aa7138bf57ffa2ca50b3ab04a5c8ec7432c77681f5d81a81578a",
+          "linkedWithoutMetadata": "28bc9d905043aa7138bf57ffa2ca50b3ab04a5c8ec7432c77681f5d81a81578a"
+        },
+        "inherit": [
+          "@fhevm/solidity/config/ZamaConfig.sol:SepoliaConfig"
+        ],
+        "libraries": [],
+        "methods": [
+          "()",
+          "buyTicket(bytes)",
+          "drawWinner()",
+          "startNewRound()",
+          "claimPrize()",
+          "claimPastPrize(uint256)",
+          "getMyTicket()",
+          "getBalance()",
+          "getParticipantCount()",
+          "getPastRoundsLength()",
+          "getPastRound(uint256)"
+        ],
+        "linkReferences": [],
+        "errors": [
+          {
+            "kind": "constructor",
+            "contract": "ConfidentialLotteryFHE",
+            "src": "contracts/ConfidentialLotteryFHE.sol:30"
+          },
+          {
+            "kind": "state-variable-assignment",
+            "name": "ticketPrice",
+            "src": "contracts/ConfidentialLotteryFHE.sol:19"
+          }
+        ],
+        "layout": {
+          "storage": [
+            {
+              "label": "encryptedTickets",
+              "offset": 0,
+              "slot": "0",
+              "type": "t_mapping(t_address,t_userDefinedValueType(euint8)40073)",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:16"
+            },
+            {
+              "label": "winner",
+              "offset": 0,
+              "slot": "1",
+              "type": "t_address",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:17"
+            },
+            {
+              "label": "isDrawn",
+              "offset": 20,
+              "slot": "1",
+              "type": "t_bool",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:18"
+            },
+            {
+              "label": "ticketPrice",
+              "offset": 0,
+              "slot": "2",
+              "type": "t_uint256",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:19"
+            },
+            {
+              "label": "participants",
+              "offset": 0,
+              "slot": "3",
+              "type": "t_array(t_address)dyn_storage",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:20"
+            },
+            {
+              "label": "admin",
+              "offset": 0,
+              "slot": "4",
+              "type": "t_address",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:21"
+            },
+            {
+              "label": "lastDrawTime",
+              "offset": 0,
+              "slot": "5",
+              "type": "t_uint256",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:22"
+            },
+            {
+              "label": "pastRounds",
+              "offset": 0,
+              "slot": "6",
+              "type": "t_array(t_struct(PastRound)39514_storage)dyn_storage",
+              "contract": "ConfidentialLotteryFHE",
+              "src": "contracts/ConfidentialLotteryFHE.sol:23"
+            }
+          ],
+          "types": {
+            "t_address": {
+              "label": "address",
+              "numberOfBytes": "20"
+            },
+            "t_array(t_address)dyn_storage": {
+              "label": "address[]",
+              "numberOfBytes": "32"
+            },
+            "t_array(t_struct(PastRound)39514_storage)dyn_storage": {
+              "label": "struct ConfidentialLotteryFHE.PastRound[]",
+              "numberOfBytes": "32"
+            },
+            "t_bool": {
+              "label": "bool",
+              "numberOfBytes": "1"
+            },
+            "t_mapping(t_address,t_userDefinedValueType(euint8)40073)": {
+              "label": "mapping(address => euint8)",
+              "numberOfBytes": "32"
+            },
+            "t_struct(PastRound)39514_storage": {
+              "label": "struct ConfidentialLotteryFHE.PastRound",
+              "members": [
+                {
+                  "label": "winner",
+                  "type": "t_address",
+                  "offset": 0,
+                  "slot": "0"
+                },
+                {
+                  "label": "prize",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "1"
+                },
+                {
+                  "label": "drawTime",
+                  "type": "t_uint256",
+                  "offset": 0,
+                  "slot": "2"
+                },
+                {
+                  "label": "claimed",
+                  "type": "t_bool",
+                  "offset": 0,
+                  "slot": "3"
+                }
+              ],
+              "numberOfBytes": "128"
+            },
+            "t_uint256": {
+              "label": "uint256",
+              "numberOfBytes": "32"
+            },
+            "t_userDefinedValueType(euint8)40073": {
+              "label": "euint8",
+              "numberOfBytes": "32",
+              "underlying": "t_bytes32"
+            },
+            "t_bytes32": {
+              "label": "bytes32"
+            }
+          },
+          "layoutVersion": "1.2",
+          "flat": true,
+          "namespaces": {}
+        },
+        "solcVersion": "0.8.24"
+      }
+    }
+  ]
+}

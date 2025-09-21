@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { BrowserProvider, Contract, parseEther, formatEther } from 'ethers';
 import Header from './components/Header';
 import WalletConnect from './components/WalletConnect';
 import LotteryStats from './components/LotteryStats';
