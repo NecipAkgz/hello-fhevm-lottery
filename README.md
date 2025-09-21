@@ -19,16 +19,12 @@ This project is a **complete, working implementation** of the "Hello FHEVM" tuto
 - [🌐 Network Configuration](#-network-configuration)
 - [📊 Contract Details](#-contract-details)
 - [🎯 Learning Outcomes](#-learning-outcomes)
+- [🔐 FHEVM Basics (For Beginners)](#-fhevm-basics-for-beginners)
+- [🔧 Troubleshooting](#-troubleshooting)
+- [❓ FAQ (Frequently Asked Questions)](#-faq-frequently-asked-questions)
+- [📞 Support & Resources](#-support--resources)
 
 ## 📋 Project Overview
-
-### 🎯 **Bounty Objectives Achieved**
-- ✅ Suitable for beginner Web3 developers
-- ✅ Solidity + JavaScript knowledge sufficient
-- ✅ Full dApp (Smart Contract + React Frontend)
-- ✅ Teaches FHEVM fundamentals with practical examples
-- ✅ Real-world application (Confidential Lottery)
-- ✅ Complete deployment and testing setup
 
 ### 🎮 **Application Features**
 - **🔐 Confidential Ticket Purchase**: Users participate with encrypted ticket numbers
@@ -632,3 +628,208 @@ This tutorial teaches you:
 - ✅ **Deployment Process**: Local and testnet deployment
 - ✅ **Testing**: Unit tests and integration testing
 - ✅ **Security**: Access control and secure randomness
+
+---
+
+## 🔐 FHEVM Basics (For Beginners)
+
+### What is FHEVM?
+- **FHE** = Fully Homomorphic Encryption (Tam Homomorfik Şifreleme)
+- **VM** = Virtual Machine (Sanal Makine)
+- **Result** = Encrypted smart contracts! (Şifreli akıllı sözleşmeler)
+
+### Why FHEVM Matters?
+❌ **Traditional Blockchain:** Everyone sees your data
+```
+tickets[user] = 42  // Everyone can see the number 42
+```
+
+✅ **FHEVM:** Only you see your data
+```
+tickets[user] = FHE(42)  // Only user can decrypt their number
+```
+
+### Simple FHEVM Example:
+```solidity
+// Traditional - Public data
+mapping(address => uint8) public tickets;
+
+// FHEVM - Encrypted data
+mapping(address => euint8) private encryptedTickets;
+```
+
+### FHEVM vs Traditional Comparison:
+
+| Feature | Traditional | FHEVM |
+|---------|-------------|-------|
+| **Data Visibility** | Everyone can see | Only data owner can see |
+| **Security** | Access control | Mathematical encryption |
+| **Privacy** | Limited | Complete privacy |
+| **Use Cases** | Public apps | Private/confidential apps |
+
+### Real-World FHEVM Applications:
+- **🔒 Private Gaming:** Poker, confidential lotteries
+- **🏥 Medical Privacy:** Encrypted health records
+- **💰 Secret Auctions:** Blind bidding systems
+- **🗳️ Private Voting:** Anonymous voting systems
+- **🔐 Identity Protection:** Private KYC processes
+
+### Why Choose FHEVM?
+1. **Privacy by Default:** No need to trust third parties
+2. **Regulatory Compliance:** GDPR, CCPA ready
+3. **Future-Proof:** Quantum-resistant encryption
+4. **Ethereum Compatible:** Works with existing tools
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues & Solutions
+
+#### ❌ **"Contract not deployed" Error**
+**Problem:** Hardhat cannot find your contract
+**Solution:**
+1. Check if you compiled the contract: `npx hardhat compile`
+2. Verify your `.env` file has correct `SEPOLIA_RPC_URL`
+3. Ensure your private key is correct in `.env`
+
+#### ❌ **"MetaMask connection failed"**
+**Problem:** Cannot connect to MetaMask
+**Solution:**
+1. Make sure MetaMask extension is installed
+2. Check if Sepolia network is added to MetaMask
+3. Try refreshing the page and reconnecting
+
+#### ❌ **"FHEVM encryption failed"**
+**Problem:** fhevmjs cannot encrypt data
+**Solution:**
+1. Verify fhevmjs is installed: `npm list @zama-fhevm-js`
+2. Check network configuration in `useLottery.js`
+3. Ensure you're connected to Sepolia testnet
+
+#### ❌ **"Transaction failed" Error**
+**Problem:** Smart contract transaction reverted
+**Solution:**
+1. Check your ETH balance (need > 0.001 ETH)
+2. Verify gas limit is sufficient (try increasing to 300,000)
+3. Ensure you're on Sepolia network, not mainnet
+
+#### ❌ **"Infura API key not working"**
+**Problem:** Cannot connect to Infura RPC
+**Solution:**
+1. Get API key from [Infura](https://www.infura.io/)
+2. Replace `YOUR_INFURA_KEY` in `.env` file
+3. Restart your terminal and try again
+
+#### ❌ **"Contract interaction failed"**
+**Problem:** Cannot call contract functions
+**Solution:**
+1. Verify contract address is correct
+2. Check if contract is deployed on Sepolia
+3. Ensure you have sufficient gas
+
+### Debug Commands:
+```bash
+# Check contract compilation
+npx hardhat compile
+
+# Test contract deployment (dry run)
+npx hardhat run scripts/deploy-sepolia.js --network sepolia --dry-run
+
+# Check gas usage
+REPORT_GAS=true npx hardhat test
+
+# Verify contract on Etherscan
+npx hardhat verify --network sepolia YOUR_CONTRACT_ADDRESS
+```
+
+### Getting Help:
+1. **Check the console:** Look for error messages in browser console
+2. **Verify network:** Ensure you're on Sepolia testnet
+3. **Check balance:** Make sure you have enough ETH for gas
+4. **Try again:** Sometimes network issues resolve automatically
+
+---
+
+## ❓ FAQ (Frequently Asked Questions)
+
+### FHEVM Basics
+**Q: What is the difference between FHEVM and traditional smart contracts?**
+A: FHEVM allows computations on encrypted data without decryption, providing privacy by default.
+
+**Q: Do I need cryptography knowledge to use FHEVM?**
+A: No! FHEVM abstracts away the complex cryptography. You just use `euint8` instead of `uint8`.
+
+**Q: Is FHEVM slower than traditional contracts?**
+A: Yes, FHE operations have computational overhead, but the privacy benefits outweigh this for most use cases.
+
+### Technical Questions
+**Q: How do I get an Infura API key?**
+A: Visit [https://www.infura.io/](https://www.infura.io/) and create a free account.
+
+**Q: Why do I need Sepolia ETH?**
+A: Sepolia is a testnet. Real ETH would be expensive for testing. Get free Sepolia ETH from faucets.
+
+**Q: Can I deploy to mainnet?**
+A: Yes, but use real ETH and be careful with gas costs. Test thoroughly on Sepolia first.
+
+### Development Questions
+**Q: What if I don't have MetaMask?**
+A: You can use other Web3 wallets like Coinbase Wallet or Trust Wallet.
+
+**Q: Can I run this locally without deployment?**
+A: Yes, use `npx hardhat node` for local testing, but you'll need to modify the frontend configuration.
+
+**Q: How do I know if FHEVM is working?**
+A: Check that ticket numbers are encrypted (you'll see bytes instead of plain numbers).
+
+### Gas & Performance
+**Q: Why are FHEVM transactions more expensive?**
+A: Encryption/decryption requires more computational resources, hence higher gas costs.
+
+**Q: How can I optimize gas usage?**
+A: Batch operations, use efficient FHE patterns, and optimize your contract logic.
+
+**Q: What's the typical gas cost for FHEVM operations?**
+A: 2-5x more than traditional operations, but this is improving with optimizations.
+
+### Security & Privacy
+**Q: Is FHEVM quantum-resistant?**
+A: Yes, FHEVM uses quantum-resistant cryptographic schemes.
+
+**Q: Can anyone decrypt my FHEVM data?**
+A: No, only the data owner with the correct decryption key can decrypt their data.
+
+**Q: How does FHEVM ensure fairness in lotteries?**
+A: Winner selection happens on encrypted data, so no one can manipulate the outcome.
+
+### Getting Started
+**Q: I'm new to Web3. Should I start with traditional contracts first?**
+A: Yes, understand basic Solidity and Web3 concepts first, then move to FHEVM.
+
+**Q: What's the best way to learn FHEVM?**
+A: Start with this tutorial, then explore Zama's documentation and examples.
+
+**Q: Can I build other applications with FHEVM?**
+A: Absolutely! FHEVM works for any application requiring privacy - auctions, voting, gaming, etc.
+
+---
+
+## 📞 Support & Resources
+
+### Official Documentation:
+- [FHEVM Documentation](https://docs.zama.ai/fhevm)
+- [Zama GitHub](https://github.com/zama-ai)
+- [Hardhat FHEVM](https://github.com/zama-ai/hardhat-fhevm)
+
+### Community:
+- [Zama Discord](https://discord.gg/zama)
+- [Ethereum Stack Exchange](https://ethereum.stackexchange.com)
+- [FHE.org](https://fhe.org)
+
+### Tools:
+- [Infura](https://www.infura.io/) - RPC endpoints
+- [Sepolia Faucet](https://sepoliafaucet.com/) - Test ETH
+- [Etherscan](https://sepolia.etherscan.io/) - Contract verification
+
+**Need more help?** Join the Zama community and ask questions! 🚀
