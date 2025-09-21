@@ -6,7 +6,6 @@ import LotteryStats from './components/LotteryStats';
 import BuyTicket from './components/BuyTicket';
 import WinnerDisplay from './components/WinnerDisplay';
 import AdminPanel from './components/AdminPanel';
-import PastRounds from './components/PastRounds';
 import ContractInfo from './components/ContractInfo';
 import Footer from './components/Footer';
 import ToastContainer from './components/ToastContainer';
@@ -68,11 +67,7 @@ function App() {
                 account={account}
                 onConnect={connectWallet}
                 txStatus={txStatus}
-              />
-
-              <PastRounds
                 pastRounds={lotteryState.pastRounds}
-                account={account}
                 onClaimPastPrize={claimPastPrize}
                 loading={loading}
               />
