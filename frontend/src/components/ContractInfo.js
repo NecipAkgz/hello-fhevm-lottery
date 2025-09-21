@@ -5,9 +5,22 @@ const ContractInfo = ({ contractAddress }) => {
       <hr style={{ borderColor: 'var(--border-light)', marginBottom: '16px' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
         <span style={{ color: 'var(--text-secondary)' }}>Contract Address:</span>
-        <span style={{ fontFamily: 'monospace', color: 'var(--primary-color)', fontSize: '0.875rem' }}>
+        <a
+          href={`https://sepolia.etherscan.io/address/${contractAddress}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: 'monospace',
+            color: 'var(--primary-color)',
+            fontSize: '0.875rem',
+            textDecoration: 'none',
+            cursor: 'pointer'
+          }}
+          onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+          onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+        >
           {contractAddress.slice(0, 10)}...{contractAddress.slice(-8)}
-        </span>
+        </a>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
         <span style={{ color: 'var(--text-secondary)' }}>Network:</span>
