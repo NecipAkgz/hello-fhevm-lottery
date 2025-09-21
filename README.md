@@ -69,7 +69,19 @@ npx hardhat compile
 npx hardhat run scripts/deploy-sepolia.js --network sepolia
 ```
 
-### 4. Start Application
+**⚠️ Important:** After deployment, copy the contract address from the console output and update it in the frontend configuration.
+
+### 4. Update Frontend Configuration
+After deployment, you'll see output like:
+```
+Contract deployed to: 0x1234567890abcdef...
+```
+
+**Copy this address** and update it in:
+- `frontend/src/hooks/useLottery.js` - Line 10: `const contractAddress = "YOUR_DEPLOYED_ADDRESS"`
+- `README.md` - Contract Details section
+
+### 5. Start Application
 ```bash
 cd frontend && npm start
 ```
