@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserProvider, Contract, parseEther, formatEther } from 'ethers';
+import { BrowserProvider, Contract, parseEther, formatEther, hexlify } from 'ethers';
 
 export const useLottery = (account, showToast, setTxStatus, contractAddress) => {
   const [contract, setContract] = useState(null);
@@ -15,14 +15,14 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
   });
   const [loading, setLoading] = useState(false);
 
-  // Contract ABI for ConfidentialLottery
+  // Contract ABI for ConfidentialLotteryFHE
   const contractABI = [
-    "function buyTicket(uint8) payable",
+    "function buyTicket(bytes) payable",
     "function drawWinner()",
     "function claimPrize()",
     "function startNewRound()",
     "function claimPastPrize(uint256)",
-    "function getMyTicket() view returns (uint8)",
+    "function getMyTicket() view returns (bytes)",
     "function getBalance() view returns (uint256)",
     "function getParticipantCount() view returns (uint256)",
     "function ticketPrice() view returns (uint256)",
@@ -102,7 +102,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
-  // Buy ticket function
+  // Buy ticket function with FHE encryption
   const buyTicket = async (ticketNumber) => {
     if (!contract || !ticketNumber || ticketNumber < 1 || ticketNumber > 100) {
       showToast('Please enter a ticket number between 1-100', 'warning');
@@ -110,13 +110,29 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
 
     setLoading(true);
-    setTxStatus('Purchasing ticket...');
+    setTxStatus('Encrypting ticket number...');
 
     try {
-      // Send ticket number directly as uint8
-      const tx = await contract.buyTicket(ticketNumber, {
+      // Initialize FHEVM SDK from CDN
+      await window.relayerSDK.initSDK();
+
+      // Create FHEVM instance with config
+      const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
+      const fhevm = await window.relayerSDK.createInstance(config);
+
+      // Encrypt the ticket number using createEncryptedInput
+      const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, ticketNumber);
+      const encryptedResult = await encryptedInput.encrypt();
+
+      // Use inputProof as bytes for the contract
+      const encryptedTicket = encryptedResult.inputProof;
+
+      setTxStatus('Purchasing ticket...');
+
+      // Send encrypted ticket as bytes
+      const tx = await contract.buyTicket(encryptedTicket, {
         value: parseEther("0.0001"),
-        gasLimit: 500000
+        gasLimit: 200000
       });
 
       await tx.wait();
@@ -198,10 +214,22 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       // Auto buy first ticket for the round starter
       setTxStatus('Auto purchasing your first ticket...');
 
-      // Send ticket number 1 directly as uint8
-      const ticketTx = await contract.buyTicket(1, {
+      // Initialize FHEVM SDK for auto ticket
+      await window.relayerSDK.initSDK();
+
+      // Create FHEVM instance for auto ticket with config
+      const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
+      const fhevm = await window.relayerSDK.createInstance(config);
+
+      // Encrypt ticket number 1 using createEncryptedInput
+      const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, 1);
+      const encryptedResult = await encryptedInput.encrypt();
+      const encryptedTicket = encryptedResult.inputProof || encryptedResult;
+
+      // Send encrypted ticket as bytes
+      const ticketTx = await contract.buyTicket(encryptedTicket, {
         value: parseEther("0.0001"),
-        gasLimit: 500000
+        gasLimit: 200000
       });
       await ticketTx.wait();
 

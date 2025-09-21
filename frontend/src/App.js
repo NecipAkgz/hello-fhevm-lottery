@@ -17,8 +17,8 @@ function App() {
   const [ticketNumber, setTicketNumber] = useState('');
   const [txStatus, setTxStatus] = useState('');
 
-  // Contract address - Sepolia testnet
-  const contractAddress = "0x06bBCb0a34eeF521290fE7AE9e085FB9167b2B70";
+  // Contract address - FHEVM Sepolia testnet
+  const contractAddress = "0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000";
 
   const { messages, showToast } = useToast();
   const { account, isConnected, connectWallet } = useWallet(showToast, contractAddress);

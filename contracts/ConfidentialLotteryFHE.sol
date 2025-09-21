@@ -36,18 +36,11 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         require(msg.value == ticketPrice, "Incorrect ticket price");
         require(!isDrawn, "Lottery already drawn");
 
-        // For now, store the encrypted ticket directly as bytes
-        // In a real FHEVM implementation, this would be properly encrypted
+        // Store the encrypted ticket directly
+        // In a real FHEVM implementation, this would be properly validated
         bytes32 ticketHash = keccak256(encryptedTicketNumber);
 
-        // Basic validation - check if ticket number is within range
-        uint8 ticketValue = uint8(bytes1(encryptedTicketNumber[0])); // Simplified for demo
-        require(
-            ticketValue >= 1 && ticketValue <= 100,
-            "Ticket must be between 1-100"
-        );
-
-        // Store ticket hash for privacy
+        // Store ticket hash for privacy (simplified for demo)
         encryptedTickets[msg.sender] = euint8.wrap(bytes32(ticketHash));
 
         // Add participant to list
