@@ -242,8 +242,8 @@ function buyTicket(uint8 _ticketNumber) external payable {
 **FHEVM Contract:**
 ```solidity
 function buyTicket(bytes calldata encryptedTicketNumber) external payable {
-    bytes32 ticketHash = keccak256(encryptedTicketNumber);
-    encryptedTickets[msg.sender] = euint8.wrap(ticketHash);
+    // Store encrypted ticket directly - no hashing needed
+    encryptedTickets[msg.sender] = FHE.asEuint8(encryptedTicketNumber);
     emit TicketPurchased(msg.sender, encryptedTicketNumber);
 }
 ```
@@ -278,15 +278,15 @@ function drawWinner() external {
 
     winner = participants[randomIndex];
     euint8 winningNumber = encryptedTickets[winner];
-    bytes32 winningNumberHash = euint8.unwrap(winningNumber);
-    emit WinnerDrawn(winner, abi.encodePacked(winningNumberHash));
+    // Winner number remains encrypted - only winner can decrypt
+    emit WinnerDrawn(winner, "ENCRYPTED"); // Privacy preserved
 }
 ```
 
 **Key Changes:**
 - Random selection: Same algorithm (identical)
 - Winner data: Plain number → Encrypted number
-- Event emission: `uint8` → `bytes` (encrypted)
+- Event emission: `uint8` → Privacy indicator
 - Privacy: Winner number exposed → Winner number hidden
 
 #### 👀 **getMyTicket() - View Personal Ticket**
@@ -302,8 +302,8 @@ function getMyTicket() external view returns (uint8) {
 ```solidity
 function getMyTicket() external view returns (bytes memory) {
     euint8 ticket = encryptedTickets[msg.sender];
-    bytes32 ticketHash = euint8.unwrap(ticket);
-    return abi.encodePacked(ticketHash);
+    // Return encrypted ticket data - only owner can decrypt
+    return FHE.sealoutput(ticket, msg.sender);
 }
 ```
 
