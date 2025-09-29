@@ -287,16 +287,19 @@ function drawWinner() external {
 
     winner = participants[randomIndex];
     euint8 winningNumber = encryptedTickets[winner];
-    // Winner number remains encrypted - only winner can decrypt
-    emit WinnerDrawn(winner, "ENCRYPTED"); // Privacy preserved
+    bytes memory encryptedWinningNumber = abi.encodePacked(
+        euint8.unwrap(winningNumber)
+    );
+
+    emit WinnerDrawn(winner, encryptedWinningNumber);
 }
 ```
 
 **Key Changes:**
 - Random selection: Same algorithm (identical)
-- Winner data: Plain number → Encrypted number
-- Event emission: `uint8` → Privacy indicator
-- Privacy: Winner number exposed → Winner number hidden
+- Winner data: Plain number → Encrypted ciphertext handle
+- Event emission: `uint8` → `bytes` payload usable for off-chain decryption
+- Privacy: Winner number exposed → Winner number hidden by default
 
 #### 👀 **getMyTicket() - View Personal Ticket**
 
@@ -311,16 +314,15 @@ function getMyTicket() external view returns (uint8) {
 ```solidity
 function getMyTicket() external view returns (bytes memory) {
     euint8 ticket = encryptedTickets[msg.sender];
-    // Return encrypted ticket data - only owner can decrypt
-    return FHE.sealoutput(ticket, msg.sender);
+    return abi.encodePacked(euint8.unwrap(ticket));
 }
 ```
 
 **Key Changes:**
 - Return type: `uint8` → `bytes memory`
 - Access: Direct mapping → Encrypted mapping
-- Data format: Plain number → Encrypted bytes
-- Privacy: Anyone can see → Only owner can decrypt
+- Data format: Plain number → Ciphertext handle for relayer decryption
+- Privacy: Anyone can see → Only owner can decrypt via FHEVM services
 
 #### 💰 **claimPrize() - Prize Claiming**
 
