@@ -39,8 +39,8 @@
       ]
     },
     "/Users/necip/Calismalar/Python/Dc/hello-fhevm-lottery/contracts/ConfidentialLotteryFHE.sol": {
-      "lastModificationDate": 1758480600704,
-      "contentHash": "1073ea6e3c3355d5c88dd9cbd39cabc5",
+      "lastModificationDate": 1759171271072,
+      "contentHash": "e7363db668b473b0b5d385e0e62990d5",
       "sourceName": "contracts/ConfidentialLotteryFHE.sol",
       "solcConfig": {
         "version": "0.8.24",
@@ -69,6 +69,7 @@
       },
       "imports": [
         "@fhevm/solidity/lib/FHE.sol",
+        "encrypted-types/EncryptedTypes.sol",
         "@fhevm/solidity/config/ZamaConfig.sol"
       ],
       "versionPragmas": [
@@ -310,8 +311,8 @@
       "artifacts": []
     },
     "/Users/necip/Calismalar/Python/Dc/hello-fhevm-lottery/fhevmTemp/@fhevm/solidity/config/ZamaConfig.sol": {
-      "lastModificationDate": 1758467286110,
-      "contentHash": "36810e84dfdd27616b5eaf3b31ddc0a9",
+      "lastModificationDate": 1759172183195,
+      "contentHash": "53afa19b446a7b49a624afc5d40ac227",
       "sourceName": "@fhevm/solidity/config/ZamaConfig.sol",
       "solcConfig": {
         "version": "0.8.24",

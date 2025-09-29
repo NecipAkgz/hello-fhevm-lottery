@@ -57,7 +57,7 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
   encodeFunctionData(functionFragment: "admin", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "buyTicket",
-    values: [BytesLike]
+    values: [BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "claimPastPrize",
@@ -192,11 +192,20 @@ export namespace PrizeClaimedEvent {
 }
 
 export namespace TicketPurchasedEvent {
-  export type InputTuple = [buyer: AddressLike, encryptedTicket: BytesLike];
-  export type OutputTuple = [buyer: string, encryptedTicket: string];
+  export type InputTuple = [
+    buyer: AddressLike,
+    ticketHandle: BytesLike,
+    encryptedTicketProof: BytesLike
+  ];
+  export type OutputTuple = [
+    buyer: string,
+    ticketHandle: string,
+    encryptedTicketProof: string
+  ];
   export interface OutputObject {
     buyer: string;
-    encryptedTicket: string;
+    ticketHandle: string;
+    encryptedTicketProof: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -266,7 +275,7 @@ export interface ConfidentialLotteryFHE extends BaseContract {
   admin: TypedContractMethod<[], [string], "view">;
 
   buyTicket: TypedContractMethod<
-    [encryptedTicketNumber: BytesLike],
+    [encryptedTicketHandle: BytesLike, encryptedTicketProof: BytesLike],
     [void],
     "payable"
   >;
@@ -331,7 +340,11 @@ export interface ConfidentialLotteryFHE extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "buyTicket"
-  ): TypedContractMethod<[encryptedTicketNumber: BytesLike], [void], "payable">;
+  ): TypedContractMethod<
+    [encryptedTicketHandle: BytesLike, encryptedTicketProof: BytesLike],
+    [void],
+    "payable"
+  >;
   getFunction(
     nameOrSignature: "claimPastPrize"
   ): TypedContractMethod<[_roundIndex: BigNumberish], [void], "nonpayable">;
@@ -448,7 +461,7 @@ export interface ConfidentialLotteryFHE extends BaseContract {
       PrizeClaimedEvent.OutputObject
     >;
 
-    "TicketPurchased(address,bytes)": TypedContractEvent<
+    "TicketPurchased(address,bytes32,bytes)": TypedContractEvent<
       TicketPurchasedEvent.InputTuple,
       TicketPurchasedEvent.OutputTuple,
       TicketPurchasedEvent.OutputObject

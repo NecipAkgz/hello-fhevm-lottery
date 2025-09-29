@@ -241,18 +241,27 @@ function buyTicket(uint8 _ticketNumber) external payable {
 
 **FHEVM Contract:**
 ```solidity
-function buyTicket(bytes calldata encryptedTicketNumber) external payable {
-    // Store encrypted ticket directly - no hashing needed
-    encryptedTickets[msg.sender] = FHE.asEuint8(encryptedTicketNumber);
-    emit TicketPurchased(msg.sender, encryptedTicketNumber);
+function buyTicket(
+    externalEuint8 encryptedTicketHandle,
+    bytes calldata encryptedTicketProof
+) external payable {
+    encryptedTickets[msg.sender] = FHE.fromExternal(
+        encryptedTicketHandle,
+        encryptedTicketProof
+    );
+    emit TicketPurchased(
+        msg.sender,
+        encryptedTicketHandle,
+        encryptedTicketProof
+    );
 }
 ```
 
 **Key Changes:**
-- Input: `uint8` → `bytes` (encrypted data)
-- Validation: Range checks → No validation needed
-- Storage: Plain assignment → Encrypted storage
-- Privacy: Number exposed → Number encrypted
+- Input: `uint8` → `externalEuint8` handle + proof (FHE ciphertext)
+- Validation: Range checks → Proof verification by the FHEVM coprocessor
+- Storage: Plain assignment → Verified encrypted storage
+- Events: Plain number → Emits ciphertext handle + proof for auditing
 
 #### 🎲 **drawWinner() - Winner Selection**
 
@@ -383,17 +392,20 @@ contract ConfidentialLottery {
 ```solidity
 contract ConfidentialLotteryFHE is SepoliaConfig {
     mapping(address => euint8) private encryptedTickets; // Encrypted storage
-    function buyTicket(bytes calldata encryptedNumber) external; // Encrypted input
+    function buyTicket(
+        externalEuint8 encryptedHandle,
+        bytes calldata proof
+    ) external; // FHE handle + proof
 }
 ```
 
 ### 🔑 **Essential Technical Differences**
 
 - **Data Types**: `uint8` → `euint8` (encrypted integers)
-- **Input Validation**: Range checks → Accept encrypted data
+- **Input Validation**: Range checks → Proof verification via FHEVM
 - **Storage Pattern**: Plain mapping → Encrypted mapping
-- **Function Signatures**: `uint8` parameters → `bytes` parameters
-- **Return Types**: Plain values → Encrypted bytes
+- **Function Signatures**: `uint8` parameters → `(externalEuint8, bytes)`
+- **Return Types**: Plain values → Ciphertext handles/bytes
 - **Security Model**: Access control → Cryptographic security
 - **Import Requirements**: None → FHEVM libraries + SepoliaConfig
 
@@ -403,7 +415,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
 |---------|---------------------|----------------|
 | **Inheritance** | `ConfidentialLottery` | `ConfidentialLotteryFHE is SepoliaConfig` |
 | **Storage** | `mapping(address => uint8)` | `mapping(address => euint8)` |
-| **buyTicket** | `uint8 _number` | `bytes encryptedNumber` |
+| **buyTicket** | `uint8 _number` | `externalEuint8 handle, bytes proof` |
 | **getMyTicket** | `returns (uint8)` | `returns (bytes memory)` |
 | **Validation** | Range checks (1-100) | No validation needed |
 
@@ -431,15 +443,19 @@ const buyTicket = async (ticketNumber) => {
   const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
   const fhevm = await window.relayerSDK.createInstance(config);
 
-  // Encrypt ticket number using FHEVM
-  const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, ticketNumber);
-  const encryptedResult = await encryptedInput.encrypt();
+// Encrypt ticket number using FHEVM
+const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account);
+encryptedInput.add8(ticketNumber);
+const { handles, inputProof } = await encryptedInput.encrypt();
 
-  // Send encrypted bytes to contract
-  const tx = await contract.buyTicket(encryptedResult.inputProof, {
-    value: parseEther("0.0001"),
-    gasLimit: 200000
-  });
+// Send ciphertext handle + proof to contract
+const ticketHandle = ethers.hexlify(handles[0]);
+const ticketProof = ethers.hexlify(inputProof);
+const ticketPrice = await contract.ticketPrice();
+
+const tx = await contract.buyTicket(ticketHandle, ticketProof, {
+  value: ticketPrice
+});
 
   await tx.wait();
 };
@@ -470,13 +486,17 @@ const startNewRound = async () => {
   await tx.wait();
 
   // Auto-purchase first ticket for round starter
-  const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, 1);
-  const encryptedResult = await encryptedInput.encrypt();
+  const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account);
+  encryptedInput.add8(1);
+  const { handles, inputProof } = await encryptedInput.encrypt();
 
-  const ticketTx = await contract.buyTicket(encryptedResult.inputProof, {
-    value: parseEther("0.0001"),
-    gasLimit: 200000
-  });
+  const ticketTx = await contract.buyTicket(
+    ethers.hexlify(handles[0]),
+    ethers.hexlify(inputProof),
+    {
+      value: await contract.ticketPrice()
+    }
+  );
 };
 ```
 

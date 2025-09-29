@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BrowserProvider, Contract, parseEther, formatEther } from 'ethers';
+import { BrowserProvider, Contract, formatEther, hexlify } from 'ethers';
 
 const contractABI = [
-  'function buyTicket(bytes) payable',
+  'function buyTicket(bytes32,bytes) payable',
   'function drawWinner()',
   'function claimPrize()',
   'function startNewRound()',
@@ -101,6 +101,30 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     initContract();
   }, [account, contractAddress, loadLotteryState]);
 
+  const encryptTicket = useCallback(
+    async (ticketNumber) => {
+      await window.relayerSDK.initSDK();
+
+      const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
+      const fhevm = await window.relayerSDK.createInstance(config);
+
+      const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account);
+      encryptedInput.add8(Number(ticketNumber));
+
+      const { handles, inputProof } = await encryptedInput.encrypt();
+
+      if (!handles || handles.length === 0) {
+        throw new Error('Encryption did not return any handles');
+      }
+
+      return {
+        handle: hexlify(handles[0]),
+        proof: hexlify(inputProof)
+      };
+    },
+    [account, contractAddress]
+  );
+
   const buyTicket = async (ticketNumber) => {
     if (!contract || !ticketNumber || ticketNumber < 1 || ticketNumber > 100) {
       showToast('Please enter a ticket number between 1-100', 'warning');
@@ -111,20 +135,13 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     setTxStatus('Encrypting ticket number...');
 
     try {
-      await window.relayerSDK.initSDK();
-
-      const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
-      const fhevm = await window.relayerSDK.createInstance(config);
-
-      const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, ticketNumber);
-      const encryptedResult = await encryptedInput.encrypt();
-      const encryptedTicket = encryptedResult.inputProof;
+      const { handle, proof } = await encryptTicket(ticketNumber);
+      const ticketPriceWei = await contract.ticketPrice();
 
       setTxStatus('Purchasing ticket...');
 
-      const tx = await contract.buyTicket(encryptedTicket, {
-        value: parseEther('0.0001'),
-        gasLimit: 200000
+      const tx = await contract.buyTicket(handle, proof, {
+        value: ticketPriceWei
       });
 
       await tx.wait();
@@ -197,18 +214,11 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
 
       setTxStatus('Auto purchasing your first ticket...');
 
-      await window.relayerSDK.initSDK();
+      const { handle, proof } = await encryptTicket(1);
+      const ticketPriceWei = await contract.ticketPrice();
 
-      const config = { ...window.relayerSDK.SepoliaConfig, network: window.ethereum };
-      const fhevm = await window.relayerSDK.createInstance(config);
-
-      const encryptedInput = await fhevm.createEncryptedInput(contractAddress, account, 1);
-      const encryptedResult = await encryptedInput.encrypt();
-      const encryptedTicket = encryptedResult.inputProof || encryptedResult;
-
-      const ticketTx = await contract.buyTicket(encryptedTicket, {
-        value: parseEther('0.0001'),
-        gasLimit: 200000
+      const ticketTx = await contract.buyTicket(handle, proof, {
+        value: ticketPriceWei
       });
 
       await ticketTx.wait();

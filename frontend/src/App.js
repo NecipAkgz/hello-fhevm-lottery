@@ -15,7 +15,7 @@ import { useToast } from './hooks/useToast';
 function App() {
   const [txStatus, setTxStatus] = React.useState('');
 
-  const contractAddress = '0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000';
+  const contractAddress = '0x6c90d81B332b01e6aa284a8B95245093C43e011B';
 
   const { messages, showToast } = useToast();
   const { account, isConnected, connectWallet } = useWallet(showToast);

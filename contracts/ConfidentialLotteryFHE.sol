@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import {FHE, euint8, ebool} from "@fhevm/solidity/lib/FHE.sol";
+import {FHE, euint8} from "@fhevm/solidity/lib/FHE.sol";
+import {externalEuint8} from "encrypted-types/EncryptedTypes.sol";
 import {SepoliaConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
 contract ConfidentialLotteryFHE is SepoliaConfig {
@@ -22,7 +23,11 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     uint256 public lastDrawTime;
     PastRound[] public pastRounds;
 
-    event TicketPurchased(address indexed buyer, bytes encryptedTicket);
+    event TicketPurchased(
+        address indexed buyer,
+        externalEuint8 ticketHandle,
+        bytes encryptedTicketProof
+    );
     event WinnerDrawn(address indexed winner, bytes encryptedWinningNumber);
     event PrizeClaimed(address indexed winner, uint256 amount);
     event LotteryReset(address indexed admin, uint256 timestamp);
@@ -32,16 +37,18 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     }
 
     // User buys a ticket with encrypted number
-    function buyTicket(bytes calldata encryptedTicketNumber) external payable {
+    function buyTicket(
+        externalEuint8 encryptedTicketHandle,
+        bytes calldata encryptedTicketProof
+    ) external payable {
         require(msg.value == ticketPrice, "Incorrect ticket price");
         require(!isDrawn, "Lottery already drawn");
 
-        // Store the encrypted ticket directly
-        // In a real FHEVM implementation, this would be properly validated
-        bytes32 ticketHash = keccak256(encryptedTicketNumber);
-
-        // Store ticket hash for privacy (simplified for demo)
-        encryptedTickets[msg.sender] = euint8.wrap(bytes32(ticketHash));
+        // Verify the externally encrypted ticket and store the resulting ciphertext handle
+        encryptedTickets[msg.sender] = FHE.fromExternal(
+            encryptedTicketHandle,
+            encryptedTicketProof
+        );
 
         // Add participant to list
         bool alreadyParticipated = false;
@@ -60,7 +67,11 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
             lastDrawTime = block.timestamp;
         }
 
-        emit TicketPurchased(msg.sender, encryptedTicketNumber);
+        emit TicketPurchased(
+            msg.sender,
+            encryptedTicketHandle,
+            encryptedTicketProof
+        );
     }
 
     // Draw random winner using FHE
@@ -97,11 +108,10 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
             })
         );
 
-        // Get encrypted winning number (simplified for demo)
+        // Provide the winner with the ciphertext handle so they can request decryption off-chain
         euint8 winningNumber = encryptedTickets[winner];
-        bytes32 winningNumberHash = euint8.unwrap(winningNumber);
         bytes memory encryptedWinningNumber = abi.encodePacked(
-            winningNumberHash
+            euint8.unwrap(winningNumber)
         );
 
         emit WinnerDrawn(winner, encryptedWinningNumber);
@@ -161,8 +171,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     // Get user's own encrypted ticket (simplified for demo)
     function getMyTicket() external view returns (bytes memory) {
         euint8 ticket = encryptedTickets[msg.sender];
-        bytes32 ticketHash = euint8.unwrap(ticket);
-        return abi.encodePacked(ticketHash);
+        return abi.encodePacked(euint8.unwrap(ticket));
     }
 
     // Check contract balance
