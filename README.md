@@ -2,8 +2,6 @@
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-View%20Application-FFD20A?style=for-the-badge&logo=vercel)](https://hello-fhevm-lottery.vercel.app/)
 
-This project is a **complete, working implementation** of the "Hello FHEVM" tutorial for **Zama Bounty Program Season 10**. It features a fully functional confidential lottery dApp designed for beginner Web3 developers to learn FHEVM concepts.
-
 ## 📋 Table of Contents
 
 - [🎯 Confidential Lottery - FHEVM Tutorial](#-confidential-lottery---fhevm-tutorial)
