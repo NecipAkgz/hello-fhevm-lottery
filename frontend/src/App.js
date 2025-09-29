@@ -68,7 +68,6 @@ function App() {
             <div className="layout-grid">
               <div className="layout-column">
                 <LotteryStats lotteryState={lotteryState} />
-                <ContractInfo contractAddress={contractAddress} />
               </div>
               <div className="layout-column">
                 <WinnerDisplay
@@ -83,6 +82,9 @@ function App() {
                   loading={loading}
                   onBuyTicket={buyTicket}
                 />
+              </div>
+              <div className="layout-column layout-column--full">
+                <ContractInfo contractAddress={contractAddress} />
               </div>
             </div>
           )}

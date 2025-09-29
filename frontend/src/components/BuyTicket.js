@@ -16,7 +16,7 @@ const BuyTicket = ({ lotteryState, loading, onBuyTicket }) => {
     loading || !ticketNumber || Number(ticketNumber) < 1 || Number(ticketNumber) > 100;
 
   return (
-    <div className="panel panel-primary ticket-panel">
+    <div className="panel panel-primary panel-compact ticket-panel">
       <div className="ticket-header">
         <div className="ticket-header-copy">
           <h2 className="panel-title">Buy your ticket</h2>
