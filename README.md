@@ -66,7 +66,7 @@ cp .env.example .env
 ### 3. Deploy Contract
 ```bash
 npx hardhat compile
-npx hardhat run scripts/deploy-sepolia.js --network sepolia
+npx hardhat run scripts/deploy-fhevm.js --network sepolia
 ```
 
 **⚠️ Important:** After deployment, copy the contract address from the console output and update it in the frontend configuration.
@@ -78,7 +78,7 @@ Contract deployed to: 0x1234567890abcdef...
 ```
 
 **Copy this address** and update it in:
-- `frontend/src/hooks/useLottery.js` - Line 10: `const contractAddress = "YOUR_DEPLOYED_ADDRESS"`
+- `frontend/src/App.js` - `const contractAddress = "YOUR_DEPLOYED_ADDRESS"`
 - `README.md` - Contract Details section
 
 ### 5. Start Application
@@ -601,7 +601,7 @@ npx hardhat test --grep "Lottery"
 ### Deployment
 ```bash
 # Sepolia testnet deployment
-npx hardhat run scripts/deploy-sepolia.js --network sepolia
+npx hardhat run scripts/deploy-fhevm.js --network sepolia
 ```
 
 ### Development
@@ -766,7 +766,7 @@ mapping(address => euint8) private encryptedTickets;
 npx hardhat compile
 
 # Test contract deployment (dry run)
-npx hardhat run scripts/deploy-sepolia.js --network sepolia --dry-run
+npx hardhat run scripts/deploy-fhevm.js --network sepolia --dry-run
 
 # Check gas usage
 REPORT_GAS=true npx hardhat test
