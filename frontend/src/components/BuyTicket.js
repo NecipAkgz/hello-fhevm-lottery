@@ -8,52 +8,68 @@ const BuyTicket = ({ lotteryState, loading, onBuyTicket }) => {
     setTicketNumber('');
   };
 
-  if (lotteryState.isDrawn) return null;
+  if (lotteryState.isDrawn) {
+    return null;
+  }
+
+  const isDisabled =
+    loading || !ticketNumber || Number(ticketNumber) < 1 || Number(ticketNumber) > 100;
 
   return (
-    <div className="card-priority" style={{ maxWidth: '500px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
-        <span className="badge" style={{ background: 'var(--success-color)', fontSize: '0.7rem' }}>🔒 ENCRYPTED</span>
-        <span className="badge" style={{ background: 'var(--warning-color)', fontSize: '0.7rem' }}>🛡️ PRIVATE</span>
-        <span className="badge" style={{ background: 'var(--secondary-color)', fontSize: '0.7rem' }}>🎯 FHEVM</span>
+    <div className="panel panel-primary ticket-panel">
+      <div className="ticket-header">
+        <div className="ticket-header-copy">
+          <h2 className="panel-title">Buy your ticket</h2>
+          <p className="panel-description">
+            Pick a number and join the pool without revealing your entry.
+          </p>
+        </div>
+        <div className="ticket-price">
+          <span className="ticket-price-label">Ticket price</span>
+          <span className="ticket-price-value">0.0001 ETH</span>
+        </div>
       </div>
 
-      <h2 style={{ textAlign: 'center', marginBottom: '8px', fontSize: '1.25rem', color: 'var(--primary-color)' }}>🎫 Buy Your Private Ticket</h2>
-
-      <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginBottom: '12px', fontSize: '0.8rem' }}>
-        🤫 Your ticket number is encrypted with FHEVM technology
-      </p>
-
-      <div style={{ background: 'var(--success-light)', padding: '8px', borderRadius: '6px', marginBottom: '16px', border: '1px solid var(--success-color)' }}>
-        <p style={{ textAlign: 'center', color: 'var(--success-dark)', fontSize: '0.75rem', margin: '0' }}>
-          ✅ <strong>Zero-Knowledge Lottery:</strong> Only the winner can prove they won!
-        </p>
+      <div className="ticket-badges">
+        <div className="badge badge-encrypted">
+          🔒 ENCRYPTED
+        </div>
+        <div className="badge badge-private">
+          🛡️ PRIVATE
+        </div>
+        <div className="badge badge-fhevm">
+          🎯 FHEVM
+        </div>
       </div>
 
-      <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+      <div className="ticket-note">
+        Fully homomorphic encryption keeps your choice hidden from everyone, including the contract owner.
+      </div>
+
+      <div className="ticket-form">
         <input
           type="number"
-          placeholder="Enter ticket number (1-100)"
+          placeholder="Enter a number between 1 and 100"
           value={ticketNumber}
-          onChange={(e) => setTicketNumber(e.target.value)}
+          onChange={(event) => setTicketNumber(event.target.value)}
           min="1"
           max="100"
-          className="form-input"
-          style={{ width: '150px', textAlign: 'center' }}
+          className="form-input ticket-input"
         />
         <button
+          type="button"
           onClick={handleBuyTicket}
-          disabled={loading || !ticketNumber || ticketNumber < 1 || ticketNumber > 100}
-          className={`btn ${loading ? 'btn-loading' : 'btn-primary'}`}
-          style={{ minWidth: '200px' }}
+          disabled={isDisabled}
+          className={`btn ticket-btn ${loading ? 'btn-loading' : 'btn-primary'}`}
         >
-          {loading ? '🔄 Encrypting & Purchasing...' : '🔒 Buy Encrypted Ticket (0.0001 ETH)'}
+          {loading ? 'Preparing transaction...' : 'Purchase ticket'}
         </button>
       </div>
 
-      <p style={{ textAlign: 'center', color: 'var(--text-secondary)', marginTop: '12px', fontSize: '0.7rem' }}>
-        🔐 Your number is mathematically encrypted and stored privately on the blockchain
-      </p>
+      <div className="ticket-footer">
+        <span>#1–#100</span>
+        <p>One encrypted ticket per purchase. Reveal happens only after the round closes.</p>
+      </div>
     </div>
   );
 };

@@ -1,109 +1,90 @@
 import React from 'react';
 
-const WalletConnect = ({ isConnected, account, onConnect, txStatus, pastRounds, onClaimPastPrize, loading }) => {
+const WalletConnect = ({
+  isConnected,
+  account,
+  onConnect,
+  txStatus,
+  pastRounds,
+  onClaimPastPrize,
+  loading
+}) => {
   const [showPastRounds, setShowPastRounds] = React.useState(false);
+
+  const formatAddress = (value) => `${value.slice(0, 6)}...${value.slice(-4)}`;
 
   if (isConnected) {
     return (
-      <div>
-        {/* Connected Account */}
-        <div className="card">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>Connected Account</div>
-              <div style={{ fontWeight: 'bold' }}>
-                {account.slice(0, 6)}...{account.slice(-4)}
-              </div>
-            </div>
-            <span className="badge" style={{ background: 'var(--success-color)' }}>
-              ✅ Connected
-            </span>
+      <div className="panel panel-primary wallet-panel">
+        <div className="wallet-header">
+          <div className="wallet-header-copy">
+            <h2 className="panel-title">Connected account</h2>
+            <p className="panel-description">
+              Your wallet is linked and ready to buy tickets or claim rewards.
+            </p>
+          </div>
+          <div className="wallet-address-block" title={account}>
+            <span className="wallet-address-label">Address</span>
+            <span className="wallet-address-value mono">{formatAddress(account)}</span>
+            <span className="wallet-status-tag">Connected</span>
           </div>
         </div>
 
-        {/* Past Rounds Section */}
+        {txStatus && <div className="wallet-note">{txStatus}</div>}
+
         {pastRounds && pastRounds.length > 0 && (
-          <div className="card" style={{ marginTop: '16px' }}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                cursor: 'pointer',
-                padding: '12px'
-              }}
-              onClick={() => setShowPastRounds(!showPastRounds)}
+          <div className="wallet-past">
+            <button
+              type="button"
+              className="wallet-past-toggle"
+              onClick={() => setShowPastRounds((prev) => !prev)}
             >
-              <div style={{ fontSize: '0.875rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                📜 Past Rounds ({pastRounds.length})
-              </div>
-              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                {showPastRounds ? '▼' : '▶'}
-              </span>
-            </div>
+              <span>Past rounds ({pastRounds.length})</span>
+              <span>{showPastRounds ? '−' : '+'}</span>
+            </button>
 
             {showPastRounds && (
-              <div style={{ padding: '0 12px 12px 12px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto' }}>
-                  {pastRounds.map((round) => {
-                    const isWinner = round.winner.toLowerCase() === account.toLowerCase();
-                    const canClaim = isWinner && !round.claimed;
+              <div className="wallet-past-list">
+                {pastRounds.map((round) => {
+                  const isWinner = round.winner.toLowerCase() === account.toLowerCase();
+                  const claimed = Boolean(round.claimed);
+                  const drawDate = new Date(round.drawTime * 1000).toLocaleDateString();
 
-                    return (
-                      <div
-                        key={round.index}
-                        style={{
-                          padding: '8px',
-                          border: '1px solid var(--border-color)',
-                          borderRadius: '6px',
-                          backgroundColor: 'var(--bg-secondary)',
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                            Round #{round.index + 1}
-                          </span>
-                          <span style={{ color: 'var(--text-secondary)' }}>
-                            {new Date(round.drawTime * 1000).toLocaleDateString()}
-                          </span>
-                        </div>
-
-                        <div style={{ marginBottom: '4px' }}>
-                          <span style={{ color: 'var(--text-secondary)' }}>Winner: </span>
-                          <span style={{ fontFamily: 'monospace' }}>
-                            {round.winner.slice(0, 4)}...{round.winner.slice(-4)}
-                          </span>
-                        </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ color: 'var(--text-secondary)' }}>
-                            Prize: {round.prize} ETH
-                          </span>
-
-                          {isWinner ? (
-                            round.claimed ? (
-                              <span style={{ color: 'var(--success-color)', fontSize: '0.75rem' }}>✅ Claimed</span>
-                            ) : (
-                              <button
-                                onClick={() => onClaimPastPrize(round.index)}
-                                disabled={loading}
-                                className="btn btn-success"
-                                style={{ fontSize: '0.7rem', padding: '2px 6px' }}
-                              >
-                                {loading ? '💰 ...' : '💰 Claim'}
-                              </button>
-                            )
-                          ) : (
-                            <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
-                              Better luck!
-                            </span>
-                          )}
-                        </div>
+                  return (
+                    <div
+                      key={round.index}
+                      className={`wallet-round-card${isWinner ? ' is-winner' : ''}`}
+                    >
+                      <div className="wallet-round-meta">
+                        <span>Round #{round.index + 1}</span>
+                        <span className="wallet-round-date">{drawDate}</span>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="wallet-round-prize">
+                        <span>Prize</span>
+                        <span className="wallet-round-amount mono">{round.prize} ETH</span>
+                      </div>
+                      <div className="wallet-round-footer">
+                        <span className="mono">{formatAddress(round.winner)}</span>
+                        {isWinner ? (
+                          claimed ? (
+                            <span className="wallet-round-status">Claimed</span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => onClaimPastPrize(round.index)}
+                              disabled={loading}
+                              className={`btn ${loading ? 'btn-loading' : 'btn-success'} btn-compact`}
+                            >
+                              Claim prize
+                            </button>
+                          )
+                        ) : (
+                          <span className="wallet-round-tip">Better luck next time</span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -112,40 +93,32 @@ const WalletConnect = ({ isConnected, account, onConnect, txStatus, pastRounds, 
     );
   }
 
+  const isConnecting = txStatus === 'Connecting...';
+
   return (
-    <div className="card-priority" style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'center' }}>
-      <h2 style={{ fontSize: '1.25rem', marginBottom: '12px', color: 'var(--primary-color)' }}>Connect Your Wallet</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
-        Connect your MetaMask wallet to participate in the confidential lottery
+    <div className="panel panel-primary">
+      <h2 className="panel-title">Connect your wallet</h2>
+      <p className="panel-description">
+        Link MetaMask to join the private draw, purchase an encrypted ticket, and follow each round securely.
       </p>
 
-      {/* App Description */}
-      <div className="card-secondary" style={{
-        borderRadius: '8px',
-        padding: '12px',
-        marginBottom: '20px',
-        textAlign: 'left'
-      }}>
-        <h3 style={{ fontSize: '0.9rem', marginBottom: '6px', color: 'var(--text-primary)' }}>
-          🎯 What is Confidential Lottery?
-        </h3>
-        <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-          A privacy-focused lottery built with Zama FHEVM technology where:
-        </p>
-        <ul style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', paddingLeft: '16px', marginBottom: '0' }}>
-          <li>🎫 Buy tickets with encrypted numbers (0.0001 ETH)</li>
-          <li>🎲 Admin draws winner randomly on blockchain</li>
-          <li>💰 Only winner can claim the prize pool</li>
+      <div className="panel-divider" />
+
+      <div className="callout">
+        <ul>
+          <li>Ticket numbers stay encrypted on-chain.</li>
+          <li>Winners are selected with fully homomorphic encryption.</li>
+          <li>Only the winner can unlock the prize.</li>
         </ul>
       </div>
 
       <button
+        type="button"
         onClick={onConnect}
-        disabled={txStatus === 'Connecting...'}
-        className={`btn ${txStatus === 'Connecting...' ? 'btn-loading' : 'btn-primary'}`}
-        style={{ minWidth: '200px' }}
+        disabled={isConnecting}
+        className={`btn ${isConnecting ? 'btn-loading' : 'btn-primary'}`}
       >
-        {txStatus === 'Connecting...' ? '🔄 Connecting...' : '🔗 Connect MetaMask'}
+        {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
       </button>
     </div>
   );

@@ -1,26 +1,9 @@
 import { useState } from 'react';
-import { BrowserProvider, Contract } from 'ethers';
 
-export const useWallet = (showToast, contractAddress) => {
+export const useWallet = (showToast) => {
   const [account, setAccount] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
-  // Contract ABI
-  const contractABI = [
-    "function buyTicket(uint8) payable",
-    "function drawWinner()",
-    "function claimPrize()",
-    "function resetLottery()",
-    "function getMyTicket() view returns (uint8)",
-    "function getBalance() view returns (uint256)",
-    "function getParticipantCount() view returns (uint256)",
-    "function ticketPrice() view returns (uint256)",
-    "function isDrawn() view returns (bool)",
-    "function winner() view returns (address)",
-    "function admin() view returns (address)"
-  ];
-
-  // Switch to Sepolia network
   const switchToSepolia = async () => {
     try {
       await window.ethereum.request({
@@ -41,15 +24,14 @@ export const useWallet = (showToast, contractAddress) => {
             }]
           });
         } catch (addError) {
-          console.error("Error adding Sepolia network:", addError);
+          console.error('Error adding Sepolia network:', addError);
         }
       } else {
-        console.error("Error switching to Sepolia:", error);
+        console.error('Error switching to Sepolia:', error);
       }
     }
   };
 
-  // Connect to MetaMask
   const connectWallet = async () => {
     if (!window.ethereum) {
       showToast('Please install MetaMask browser extension', 'error');
@@ -66,9 +48,8 @@ export const useWallet = (showToast, contractAddress) => {
       setIsConnected(true);
 
       showToast('Wallet connected successfully!', 'success');
-
     } catch (error) {
-      console.error("Error connecting wallet:", error);
+      console.error('Error connecting wallet:', error);
       showToast('Connection failed: ' + error.message, 'error');
     }
   };

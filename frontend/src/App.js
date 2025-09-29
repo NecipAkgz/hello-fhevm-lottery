@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './components/Header';
 import WalletConnect from './components/WalletConnect';
 import LotteryStats from './components/LotteryStats';
 import BuyTicket from './components/BuyTicket';
 import WinnerDisplay from './components/WinnerDisplay';
-
 import ContractInfo from './components/ContractInfo';
 import Footer from './components/Footer';
 import ToastContainer from './components/ToastContainer';
@@ -14,16 +13,13 @@ import { useWallet } from './hooks/useWallet';
 import { useToast } from './hooks/useToast';
 
 function App() {
-  const [ticketNumber, setTicketNumber] = useState('');
-  const [txStatus, setTxStatus] = useState('');
+  const [txStatus, setTxStatus] = React.useState('');
 
-  // Contract address - FHEVM Sepolia testnet
-  const contractAddress = "0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000";
+  const contractAddress = '0x22E1FcFA32e01B1eD5c3Ed1d4f41E11a2a9b0000';
 
   const { messages, showToast } = useToast();
-  const { account, isConnected, connectWallet } = useWallet(showToast, contractAddress);
+  const { account, isConnected, connectWallet } = useWallet(showToast);
   const {
-    contract,
     lotteryState,
     loading,
     buyTicket,
@@ -33,7 +29,6 @@ function App() {
     claimPastPrize
   } = useLottery(account, showToast, setTxStatus, contractAddress);
 
-  // Listen for draw winner event
   React.useEffect(() => {
     const handleDrawWinner = () => {
       drawWinner();
@@ -51,8 +46,7 @@ function App() {
 
           <ToastContainer messages={messages} />
 
-          {/* Wallet Connection Section */}
-          <div className="section wallet-section">
+          <div className="section wallet-section stack">
             <WalletConnect
               isConnected={isConnected}
               account={account}
@@ -65,20 +59,18 @@ function App() {
 
             {isConnected && txStatus && (
               <StatusMessage type="info">
-                <strong>Transaction in progress:</strong> {txStatus}
+                Processing transaction: {txStatus}
               </StatusMessage>
             )}
           </div>
 
           {isConnected && (
-            <>
-              {/* Lottery Stats Section */}
-              <div className="section stats-section">
+            <div className="layout-grid">
+              <div className="layout-column">
                 <LotteryStats lotteryState={lotteryState} />
+                <ContractInfo contractAddress={contractAddress} />
               </div>
-
-              {/* Main Actions Section */}
-              <div className="section actions-section">
+              <div className="layout-column">
                 <WinnerDisplay
                   lotteryState={lotteryState}
                   account={account}
@@ -86,19 +78,13 @@ function App() {
                   onClaimPrize={claimPrize}
                   onStartNewRound={startNewRound}
                 />
-
                 <BuyTicket
                   lotteryState={lotteryState}
                   loading={loading}
                   onBuyTicket={buyTicket}
                 />
               </div>
-
-              {/* Contract Info Section */}
-              <div className="section contract-section">
-                <ContractInfo contractAddress={contractAddress} />
-              </div>
-            </>
+            </div>
           )}
         </div>
       </div>
