@@ -2,8 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { BrowserProvider, Contract, formatEther, hexlify } from 'ethers';
 
 const contractABI = [
+  'event WinnerDecryptionRequested(uint256 indexed requestID, bytes32 randomIndexHandle)',
+  'event WinnerDrawn(address indexed winner, bytes encryptedWinningNumber)',
   'function buyTicket(bytes32,bytes) payable',
   'function drawWinner()',
+  'function fulfillRandomIndex(uint256,bytes,bytes)',
   'function claimPrize()',
   'function startNewRound()',
   'function claimPastPrize(uint256)',
@@ -12,6 +15,7 @@ const contractABI = [
   'function getParticipantCount() view returns (uint256)',
   'function ticketPrice() view returns (uint256)',
   'function isDrawn() view returns (bool)',
+  'function drawPending() view returns (bool)',
   'function winner() view returns (address)',
   'function admin() view returns (address)',
   'function lastDrawTime() view returns (uint256)',
@@ -24,6 +28,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
   const [contract, setContract] = useState(null);
   const [lotteryState, setLotteryState] = useState({
     isDrawn: false,
+    drawPending: false,
     winner: '',
     participantCount: 0,
     balance: '0',
@@ -37,8 +42,19 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
   // Pulls current lottery state and recent round history from the blockchain.
   const loadLotteryState = useCallback(async (contractInstance) => {
     try {
-      const [isDrawn, winner, participantCount, balance, ticketPrice, lastDrawTime, admin, pastRoundsLength] = await Promise.all([
+      const [
+        isDrawn,
+        drawPending,
+        winner,
+        participantCount,
+        balance,
+        ticketPrice,
+        lastDrawTime,
+        admin,
+        pastRoundsLength
+      ] = await Promise.all([
         contractInstance.isDrawn(),
+        contractInstance.drawPending(),
         contractInstance.winner(),
         contractInstance.getParticipantCount(),
         contractInstance.getBalance(),
@@ -70,6 +86,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       setLotteryState({
         isDrawn,
         winner,
+        drawPending,
         participantCount: Number(participantCount),
         balance: formatEther(balance),
         ticketPrice: formatEther(ticketPrice),
@@ -103,6 +120,29 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
 
     initContract();
   }, [account, contractAddress, loadLotteryState]);
+
+  useEffect(() => {
+    if (!contract) return;
+
+    const handleDecryptionRequested = async () => {
+      setTxStatus('Awaiting FHE oracle to reveal the winner...');
+      await loadLotteryState(contract);
+    };
+
+    const handleWinnerDrawn = async (winnerAddress) => {
+      showToast(`Winner decrypted: ${winnerAddress}`, 'success');
+      setTxStatus('');
+      await loadLotteryState(contract);
+    };
+
+    contract.on('WinnerDecryptionRequested', handleDecryptionRequested);
+    contract.on('WinnerDrawn', handleWinnerDrawn);
+
+    return () => {
+      contract.off('WinnerDecryptionRequested', handleDecryptionRequested);
+      contract.off('WinnerDrawn', handleWinnerDrawn);
+    };
+  }, [contract, loadLotteryState, showToast, setTxStatus]);
 
   // Encrypts a ticket number into an FHE handle + proof pair that the contract accepts.
   const encryptTicket = useCallback(
@@ -167,20 +207,28 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     if (!contract) return;
 
     setLoading(true);
-    setTxStatus('Drawing winner...');
+    setTxStatus('Requesting FHE-powered draw...');
 
     try {
       const tx = await contract.drawWinner();
       await tx.wait();
 
-      showToast('Winner drawn successfully! 🎉', 'success');
+      showToast('FHE oracle request sent. Awaiting decryption… 🔐', 'info');
       await loadLotteryState(contract);
+
+      const pending = await contract.drawPending();
+      if (pending) {
+        setTxStatus('Awaiting FHE oracle to reveal the winner...');
+      } else {
+        setTxStatus('');
+        showToast('Winner drawn successfully! 🎉', 'success');
+      }
     } catch (error) {
       console.error('Error drawing winner:', error);
       showToast('Drawing failed: ' + error.message, 'error');
+      setTxStatus('');
     } finally {
       setLoading(false);
-      setTxStatus('');
     }
   };
 

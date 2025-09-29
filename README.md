@@ -281,25 +281,33 @@ function drawWinner() external {
 **FHEVM Contract:**
 ```solidity
 function drawWinner() external {
-    uint256 randomIndex = uint256(keccak256(abi.encodePacked(
-        block.timestamp, block.prevrandao, participants.length
-    ))) % participants.length;
+    euint8 randomIndexEnc = FHE.randEuint8(uint8(participants.length));
+    bytes32[] memory handles = new bytes32[](1);
+    handles[0] = euint8.unwrap(randomIndexEnc);
 
-    winner = participants[randomIndex];
-    euint8 winningNumber = encryptedTickets[winner];
-    bytes memory encryptedWinningNumber = abi.encodePacked(
-        euint8.unwrap(winningNumber)
-    );
+    pendingRequestId = FHE.requestDecryption(handles, this.fulfillRandomIndex.selector);
+    drawPending = true;
+    emit WinnerDecryptionRequested(pendingRequestId, handles[0]);
+}
 
-    emit WinnerDrawn(winner, encryptedWinningNumber);
+function fulfillRandomIndex(
+    uint256 requestID,
+    bytes memory decryptedResult,
+    bytes memory proof
+) external {
+    FHE.checkSignatures(requestID, decryptedResult, proof);
+    uint256 index = uint256(bytes32(decryptedResult)) % participants.length;
+    winner = participants[index];
+    emit WinnerDrawn(winner, abi.encodePacked(euint8.unwrap(encryptedTickets[winner])));
 }
 ```
 
 **Key Changes:**
-- Random selection: Same algorithm (identical)
-- Winner data: Plain number → Encrypted ciphertext handle
-- Event emission: `uint8` → `bytes` payload usable for off-chain decryption
-- Privacy: Winner number exposed → Winner number hidden by default
+- Randomness: Uses FHE coprocessor `randEuint8` instead of on-chain hash
+- Decryption: Winner resolved asynchronously via oracle callback & signature check
+- Event emission: Emits handle (`WinnerDecryptionRequested`) plus encrypted ticket payload
+- State management: `drawPending` blocks new ticket buys while the oracle finalizes the result
+- Privacy: Winner number and index stay encrypted until decryption is fulfilled
 
 #### 👀 **getMyTicket() - View Personal Ticket**
 
@@ -468,7 +476,8 @@ const tx = await contract.buyTicket(ticketHandle, ticketProof, {
 const drawWinner = async () => {
   const tx = await contract.drawWinner();
   await tx.wait();
-  // Contract selects winner using blockchain randomness
+  // Winner is revealed asynchronously once the FHE oracle calls fulfillRandomIndex
+  showToast('FHE oracle request sent. Waiting for winner…', 'info');
 };
 ```
 
@@ -505,9 +514,10 @@ const startNewRound = async () => {
 #### 📊 **loadLotteryState() - Real-time Updates**
 ```javascript
 const loadLotteryState = async (contractInstance) => {
-  const [isDrawn, winner, participantCount, balance, ticketPrice, lastDrawTime, admin, pastRoundsLength] =
+  const [isDrawn, drawPending, winner, participantCount, balance, ticketPrice, lastDrawTime, admin, pastRoundsLength] =
     await Promise.all([
       contractInstance.isDrawn(),
+      contractInstance.drawPending(),
       contractInstance.winner(),
       contractInstance.getParticipantCount(),
       contractInstance.getBalance(),
@@ -530,21 +540,38 @@ const loadLotteryState = async (contractInstance) => {
     });
   }
 
-  setLotteryState({ /* update state */ });
+  setLotteryState({
+    isDrawn,
+    drawPending,
+    winner,
+    participantCount: Number(participantCount),
+    balance: formatEther(balance),
+    ticketPrice: formatEther(ticketPrice),
+    lastDrawTime: Number(lastDrawTime),
+    admin,
+    pastRounds
+  });
 };
 ```
 
 #### 🔗 **Contract ABI for FHEVM**
 ```javascript
 const contractABI = [
-  "function buyTicket(bytes) payable",           // Encrypted input
-  "function drawWinner()",                       // Random selection
-  "function claimPrize()",                       // Winner claims
-  "function startNewRound()",                    // Manual reset
-  "function claimPastPrize(uint256)",            // Historical claims
-  "function getMyTicket() view returns (bytes)", // Encrypted return
+  "function buyTicket(bytes32,bytes) payable",    // Encrypted input (handle + proof)
+  "function drawWinner()",                        // Asks FHE oracle for random index
+  "function fulfillRandomIndex(uint256,bytes,bytes)", // Oracle callback
+  "function claimPrize()",                        // Winner claims
+  "function startNewRound()",                     // Manual reset
+  "function claimPastPrize(uint256)",             // Historical claims
+  "function getMyTicket() view returns (bytes)",  // Encrypted return
   "function getBalance() view returns (uint256)",
   "function getParticipantCount() view returns (uint256)",
+  "function ticketPrice() view returns (uint256)",
+  "function isDrawn() view returns (bool)",
+  "function drawPending() view returns (bool)",
+  "function winner() view returns (address)",
+  "function lastDrawTime() view returns (uint256)",
+  "function getPastRoundsLength() view returns (uint256)",
   "function getPastRound(uint256) view returns (address, uint256, uint256, bool)"
 ];
 ```
@@ -578,11 +605,11 @@ const contractABI = [
 1. **Connect Wallet**: Link MetaMask to dApp
 2. **Buy Ticket**: Choose number 1-100, pay 0.0001 ETH
 3. **Wait for Participants**: Multiple users join
-4. **Draw Winner**: Admin runs random selection
+4. **Draw Winner**: Admin requests FHE oracle to reveal random participant
 5. **Claim Prize**: Winner receives total prize pool
 
 ### 4. Admin Functions
-- Draw winner (selects random participant)
+- Draw winner (requests oracle-backed random selection)
 - Monitor lottery status
 - View all participants
 

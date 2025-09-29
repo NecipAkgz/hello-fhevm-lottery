@@ -17,6 +17,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     mapping(address => euint8) private encryptedTickets;
     address public winner;
     bool public isDrawn;
+    bool public drawPending;
     uint256 public ticketPrice = 0.0001 ether;
     address[] public participants;
     address public admin;
@@ -29,6 +30,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         bytes encryptedTicketProof
     );
     event WinnerDrawn(address indexed winner, bytes encryptedWinningNumber);
+    event WinnerDecryptionRequested(uint256 indexed requestID, bytes32 randomIndexHandle);
     event PrizeClaimed(address indexed winner, uint256 amount);
     event LotteryReset(address indexed admin, uint256 timestamp);
 
@@ -43,6 +45,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     ) external payable {
         require(msg.value == ticketPrice, "Incorrect ticket price");
         require(!isDrawn, "Lottery already drawn");
+        require(!drawPending, "Draw in progress");
 
         // Verify the externally encrypted ticket and store the resulting ciphertext handle
         encryptedTickets[msg.sender] = FHE.fromExternal(
@@ -75,30 +78,49 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     }
 
     // Draw random winner using FHE
+    uint256 private pendingRequestId;
+    bytes32 private pendingRandomIndexHandle;
+
     function drawWinner() external {
         require(!isDrawn, "Lottery already drawn");
+        require(!drawPending, "Draw in progress");
         require(participants.length > 0, "No participants");
         require(
             msg.sender == admin || (block.timestamp >= lastDrawTime + 600),
             "Draw not available yet or not admin"
         );
+        require(participants.length <= type(uint8).max, "Too many participants");
 
-        // Select random winner using FHE randomness
-        uint256 randomIndex = uint256(
-            keccak256(
-                abi.encodePacked(
-                    block.timestamp,
-                    block.prevrandao,
-                    participants.length
-                )
-            )
-        ) % participants.length;
-        winner = participants[randomIndex];
+        euint8 randomIndexEncrypted = FHE.randEuint8(uint8(participants.length));
+        bytes32[] memory handles = new bytes32[](1);
+        handles[0] = euint8.unwrap(randomIndexEncrypted);
 
-        isDrawn = true;
+        pendingRandomIndexHandle = handles[0];
+        pendingRequestId = FHE.requestDecryption(handles, this.fulfillRandomIndex.selector);
+        drawPending = true;
         lastDrawTime = block.timestamp;
 
-        // Save to past rounds
+        emit WinnerDecryptionRequested(pendingRequestId, pendingRandomIndexHandle);
+    }
+
+    function fulfillRandomIndex(
+        uint256 requestID,
+        bytes memory decryptedResult,
+        bytes memory decryptionProof
+    ) external {
+        require(drawPending, "No pending draw");
+        require(requestID == pendingRequestId, "Unexpected request");
+
+        FHE.checkSignatures(requestID, decryptedResult, decryptionProof);
+        require(decryptedResult.length >= 32, "Invalid cleartext");
+
+        uint256 randomIndex = uint256(bytes32(decryptedResult)) % participants.length;
+
+        winner = participants[randomIndex];
+        isDrawn = true;
+        drawPending = false;
+        lastDrawTime = block.timestamp;
+
         pastRounds.push(
             PastRound({
                 winner: winner,
@@ -108,7 +130,6 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
             })
         );
 
-        // Provide the winner with the ciphertext handle so they can request decryption off-chain
         euint8 winningNumber = encryptedTickets[winner];
         bytes memory encryptedWinningNumber = abi.encodePacked(
             euint8.unwrap(winningNumber)
@@ -120,6 +141,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     // Start new round (anyone can call after draw)
     function startNewRound() external {
         require(isDrawn, "Lottery not drawn yet");
+        require(!drawPending, "Draw in progress");
 
         // Reset all state variables
         isDrawn = false;
@@ -135,6 +157,7 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     // Winner claims prize
     function claimPrize() external {
         require(isDrawn, "Lottery not drawn yet");
+        require(!drawPending, "Draw in progress");
         require(msg.sender == winner, "Not the winner");
 
         uint256 prize = address(this).balance;

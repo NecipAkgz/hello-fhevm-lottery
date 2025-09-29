@@ -30,7 +30,9 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
       | "buyTicket"
       | "claimPastPrize"
       | "claimPrize"
+      | "drawPending"
       | "drawWinner"
+      | "fulfillRandomIndex"
       | "getBalance"
       | "getMyTicket"
       | "getParticipantCount"
@@ -48,9 +50,11 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
 
   getEvent(
     nameOrSignatureOrTopic:
+      | "DecryptionFulfilled"
       | "LotteryReset"
       | "PrizeClaimed"
       | "TicketPurchased"
+      | "WinnerDecryptionRequested"
       | "WinnerDrawn"
   ): EventFragment;
 
@@ -68,8 +72,16 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "drawPending",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "drawWinner",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "fulfillRandomIndex",
+    values: [BigNumberish, BytesLike, BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getBalance",
@@ -125,7 +137,15 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "claimPrize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "drawPending",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "drawWinner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "fulfillRandomIndex",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getMyTicket",
@@ -163,6 +183,18 @@ export interface ConfidentialLotteryFHEInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "winner", data: BytesLike): Result;
+}
+
+export namespace DecryptionFulfilledEvent {
+  export type InputTuple = [requestID: BigNumberish];
+  export type OutputTuple = [requestID: bigint];
+  export interface OutputObject {
+    requestID: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
 }
 
 export namespace LotteryResetEvent {
@@ -206,6 +238,22 @@ export namespace TicketPurchasedEvent {
     buyer: string;
     ticketHandle: string;
     encryptedTicketProof: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace WinnerDecryptionRequestedEvent {
+  export type InputTuple = [
+    requestID: BigNumberish,
+    randomIndexHandle: BytesLike
+  ];
+  export type OutputTuple = [requestID: bigint, randomIndexHandle: string];
+  export interface OutputObject {
+    requestID: bigint;
+    randomIndexHandle: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -288,7 +336,19 @@ export interface ConfidentialLotteryFHE extends BaseContract {
 
   claimPrize: TypedContractMethod<[], [void], "nonpayable">;
 
+  drawPending: TypedContractMethod<[], [boolean], "view">;
+
   drawWinner: TypedContractMethod<[], [void], "nonpayable">;
+
+  fulfillRandomIndex: TypedContractMethod<
+    [
+      requestID: BigNumberish,
+      decryptedResult: BytesLike,
+      decryptionProof: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
 
   getBalance: TypedContractMethod<[], [bigint], "view">;
 
@@ -352,8 +412,22 @@ export interface ConfidentialLotteryFHE extends BaseContract {
     nameOrSignature: "claimPrize"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "drawPending"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
     nameOrSignature: "drawWinner"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "fulfillRandomIndex"
+  ): TypedContractMethod<
+    [
+      requestID: BigNumberish,
+      decryptedResult: BytesLike,
+      decryptionProof: BytesLike
+    ],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "getBalance"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -410,6 +484,13 @@ export interface ConfidentialLotteryFHE extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
 
   getEvent(
+    key: "DecryptionFulfilled"
+  ): TypedContractEvent<
+    DecryptionFulfilledEvent.InputTuple,
+    DecryptionFulfilledEvent.OutputTuple,
+    DecryptionFulfilledEvent.OutputObject
+  >;
+  getEvent(
     key: "LotteryReset"
   ): TypedContractEvent<
     LotteryResetEvent.InputTuple,
@@ -431,6 +512,13 @@ export interface ConfidentialLotteryFHE extends BaseContract {
     TicketPurchasedEvent.OutputObject
   >;
   getEvent(
+    key: "WinnerDecryptionRequested"
+  ): TypedContractEvent<
+    WinnerDecryptionRequestedEvent.InputTuple,
+    WinnerDecryptionRequestedEvent.OutputTuple,
+    WinnerDecryptionRequestedEvent.OutputObject
+  >;
+  getEvent(
     key: "WinnerDrawn"
   ): TypedContractEvent<
     WinnerDrawnEvent.InputTuple,
@@ -439,6 +527,17 @@ export interface ConfidentialLotteryFHE extends BaseContract {
   >;
 
   filters: {
+    "DecryptionFulfilled(uint256)": TypedContractEvent<
+      DecryptionFulfilledEvent.InputTuple,
+      DecryptionFulfilledEvent.OutputTuple,
+      DecryptionFulfilledEvent.OutputObject
+    >;
+    DecryptionFulfilled: TypedContractEvent<
+      DecryptionFulfilledEvent.InputTuple,
+      DecryptionFulfilledEvent.OutputTuple,
+      DecryptionFulfilledEvent.OutputObject
+    >;
+
     "LotteryReset(address,uint256)": TypedContractEvent<
       LotteryResetEvent.InputTuple,
       LotteryResetEvent.OutputTuple,
@@ -470,6 +569,17 @@ export interface ConfidentialLotteryFHE extends BaseContract {
       TicketPurchasedEvent.InputTuple,
       TicketPurchasedEvent.OutputTuple,
       TicketPurchasedEvent.OutputObject
+    >;
+
+    "WinnerDecryptionRequested(uint256,bytes32)": TypedContractEvent<
+      WinnerDecryptionRequestedEvent.InputTuple,
+      WinnerDecryptionRequestedEvent.OutputTuple,
+      WinnerDecryptionRequestedEvent.OutputObject
+    >;
+    WinnerDecryptionRequested: TypedContractEvent<
+      WinnerDecryptionRequestedEvent.InputTuple,
+      WinnerDecryptionRequestedEvent.OutputTuple,
+      WinnerDecryptionRequestedEvent.OutputObject
     >;
 
     "WinnerDrawn(address,bytes)": TypedContractEvent<
