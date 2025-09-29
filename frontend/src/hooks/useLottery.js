@@ -19,6 +19,7 @@ const contractABI = [
   'function getPastRound(uint256) view returns (address, uint256, uint256, bool)'
 ];
 
+// Orchestrates lottery contract interactions plus FHE ticket handling hooks.
 export const useLottery = (account, showToast, setTxStatus, contractAddress) => {
   const [contract, setContract] = useState(null);
   const [lotteryState, setLotteryState] = useState({
@@ -33,6 +34,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
   });
   const [loading, setLoading] = useState(false);
 
+  // Pulls current lottery state and recent round history from the blockchain.
   const loadLotteryState = useCallback(async (contractInstance) => {
     try {
       const [isDrawn, winner, participantCount, balance, ticketPrice, lastDrawTime, admin, pastRoundsLength] = await Promise.all([
@@ -86,6 +88,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
       return;
     }
 
+    // Builds a signer-backed contract instance whenever the user context changes.
     const initContract = async () => {
       try {
         const provider = new BrowserProvider(window.ethereum);
@@ -101,6 +104,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     initContract();
   }, [account, contractAddress, loadLotteryState]);
 
+  // Encrypts a ticket number into an FHE handle + proof pair that the contract accepts.
   const encryptTicket = useCallback(
     async (ticketNumber) => {
       await window.relayerSDK.initSDK();
@@ -125,6 +129,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     [account, contractAddress]
   );
 
+  // Sends an encrypted ticket purchase using the handle + proof produced above.
   const buyTicket = async (ticketNumber) => {
     if (!contract || !ticketNumber || ticketNumber < 1 || ticketNumber > 100) {
       showToast('Please enter a ticket number between 1-100', 'warning');
@@ -157,6 +162,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
+  // Triggers the on-chain draw routine once conditions are met.
   const drawWinner = async () => {
     if (!contract) return;
 
@@ -178,6 +184,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
+  // Lets the current winner collect their encrypted-round payout.
   const claimPrize = async () => {
     if (!contract) return;
 
@@ -199,6 +206,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
+  // Resets contract state and pre-buys a ticket to seed the next encrypted round.
   const startNewRound = async () => {
     if (!contract) return;
 
@@ -234,6 +242,7 @@ export const useLottery = (account, showToast, setTxStatus, contractAddress) => 
     }
   };
 
+  // Allows winners from prior encrypted rounds to withdraw missed prizes.
   const claimPastPrize = async (roundIndex) => {
     if (!contract) return;
 

@@ -1,9 +1,11 @@
 import { useState } from 'react';
 
+// Provides wallet connection helpers tailored for the FHE learning demo UI.
 export const useWallet = (showToast) => {
   const [account, setAccount] = useState('');
   const [isConnected, setIsConnected] = useState(false);
 
+  // Switches or adds Sepolia in MetaMask so FHE-enabled contracts are reachable.
   const switchToSepolia = async () => {
     try {
       await window.ethereum.request({
@@ -32,6 +34,7 @@ export const useWallet = (showToast) => {
     }
   };
 
+  // Requests wallet access and updates local state once the user approves.
   const connectWallet = async () => {
     if (!window.ethereum) {
       showToast('Please install MetaMask browser extension', 'error');
