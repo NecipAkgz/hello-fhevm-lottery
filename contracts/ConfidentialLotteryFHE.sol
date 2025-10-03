@@ -5,6 +5,9 @@ import {FHE, euint8} from "@fhevm/solidity/lib/FHE.sol";
 import {externalEuint8} from "encrypted-types/EncryptedTypes.sol";
 import {SepoliaConfig} from "@fhevm/solidity/config/ZamaConfig.sol";
 
+// Confidential Lottery contract using Fully Homomorphic Encryption (FHE)
+// This contract allows users to participate in a lottery with encrypted ticket numbers
+// The winner selection process maintains confidentiality using FHE operations
 contract ConfidentialLotteryFHE is SepoliaConfig {
     struct PastRound {
         address winner;
@@ -13,7 +16,6 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         bool claimed;
     }
 
-    // FHE encrypted ticket numbers
     mapping(address => euint8) private encryptedTickets;
     address public winner;
     bool public isDrawn;
@@ -24,21 +26,33 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
     uint256 public lastDrawTime;
     PastRound[] public pastRounds;
 
+    // Emitted when a user successfully purchases a lottery ticket
     event TicketPurchased(
         address indexed buyer,
         externalEuint8 ticketHandle,
         bytes encryptedTicketProof
     );
+    // Emitted when a winner is selected and their encrypted winning number is revealed
     event WinnerDrawn(address indexed winner, bytes encryptedWinningNumber);
-    event WinnerDecryptionRequested(uint256 indexed requestID, bytes32 randomIndexHandle);
+    // Emitted when a decryption request is made for the random winner index
+    event WinnerDecryptionRequested(
+        uint256 indexed requestID,
+        bytes32 randomIndexHandle
+    );
+    // Emitted when a winner claims their prize
     event PrizeClaimed(address indexed winner, uint256 amount);
+    // Emitted when the lottery is reset for a new round
     event LotteryReset(address indexed admin, uint256 timestamp);
 
+    // Constructor: Sets the contract deployer as the administrator
     constructor() {
         admin = msg.sender;
     }
 
-    // User buys a ticket with encrypted number
+    // Allows a user to purchase a lottery ticket with an encrypted ticket number
+    // The ticket number remains encrypted throughout the process for confidentiality
+    // @param encryptedTicketHandle: Handle to the externally encrypted ticket
+    // @param encryptedTicketProof: Proof for the encrypted ticket verification
     function buyTicket(
         externalEuint8 encryptedTicketHandle,
         bytes calldata encryptedTicketProof
@@ -77,10 +91,13 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         );
     }
 
-    // Draw random winner using FHE
+    // Private variables to track pending decryption requests
     uint256 private pendingRequestId;
     bytes32 private pendingRandomIndexHandle;
 
+    // Initiates the winner selection process using FHE for random number generation
+    // Generates an encrypted random index and requests its decryption from the FHE oracle
+    // Can be called by admin or automatically after 10 minutes (600 seconds) from last draw/first participant
     function drawWinner() external {
         require(!isDrawn, "Lottery already drawn");
         require(!drawPending, "Draw in progress");
@@ -89,20 +106,36 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
             msg.sender == admin || (block.timestamp >= lastDrawTime + 600),
             "Draw not available yet or not admin"
         );
-        require(participants.length <= type(uint8).max, "Too many participants");
+        require(
+            participants.length <= type(uint8).max,
+            "Too many participants"
+        );
 
-        euint8 randomIndexEncrypted = FHE.randEuint8(uint8(participants.length));
+        euint8 randomIndexEncrypted = FHE.randEuint8(
+            uint8(participants.length)
+        );
         bytes32[] memory handles = new bytes32[](1);
         handles[0] = euint8.unwrap(randomIndexEncrypted);
 
         pendingRandomIndexHandle = handles[0];
-        pendingRequestId = FHE.requestDecryption(handles, this.fulfillRandomIndex.selector);
+        pendingRequestId = FHE.requestDecryption(
+            handles,
+            this.fulfillRandomIndex.selector
+        );
         drawPending = true;
         lastDrawTime = block.timestamp;
 
-        emit WinnerDecryptionRequested(pendingRequestId, pendingRandomIndexHandle);
+        emit WinnerDecryptionRequested(
+            pendingRequestId,
+            pendingRandomIndexHandle
+        );
     }
 
+    // Callback function called by the FHE oracle with the decrypted random index
+    // Selects the winner based on the decrypted random number and records the round
+    // @param requestID: The ID of the decryption request
+    // @param decryptedResult: The decrypted random index as bytes
+    // @param decryptionProof: Proof of the decryption operation
     function fulfillRandomIndex(
         uint256 requestID,
         bytes memory decryptedResult,
@@ -114,7 +147,8 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         FHE.checkSignatures(requestID, decryptedResult, decryptionProof);
         require(decryptedResult.length >= 32, "Invalid cleartext");
 
-        uint256 randomIndex = uint256(bytes32(decryptedResult)) % participants.length;
+        uint256 randomIndex = uint256(bytes32(decryptedResult)) %
+            participants.length;
 
         winner = participants[randomIndex];
         isDrawn = true;
@@ -138,7 +172,9 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         emit WinnerDrawn(winner, encryptedWinningNumber);
     }
 
-    // Start new round (anyone can call after draw)
+    // Resets the lottery state to start a new round
+    // Can be called by anyone after a winner has been drawn
+    // Clears all participants and resets flags for the next lottery round
     function startNewRound() external {
         require(isDrawn, "Lottery not drawn yet");
         require(!drawPending, "Draw in progress");
@@ -154,7 +190,8 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         emit LotteryReset(msg.sender, block.timestamp);
     }
 
-    // Winner claims prize
+    // Allows the current winner to claim their prize from the most recent lottery round
+    // Transfers the entire contract balance to the winner and marks the prize as claimed
     function claimPrize() external {
         require(isDrawn, "Lottery not drawn yet");
         require(!drawPending, "Draw in progress");
@@ -173,7 +210,8 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         emit PrizeClaimed(winner, prize);
     }
 
-    // Claim prize from past rounds
+    // Allows winners to claim prizes from historical lottery rounds
+    // @param _roundIndex: The index of the past round to claim the prize from
     function claimPastPrize(uint256 _roundIndex) external {
         require(_roundIndex < pastRounds.length, "Invalid round index");
         require(
@@ -191,28 +229,35 @@ contract ConfidentialLotteryFHE is SepoliaConfig {
         emit PrizeClaimed(msg.sender, prize);
     }
 
-    // Get user's own encrypted ticket (simplified for demo)
+    // View Functions
+
+    // Returns the encrypted ticket handle for the calling user (for demonstration purposes)
     function getMyTicket() external view returns (bytes memory) {
         euint8 ticket = encryptedTickets[msg.sender];
         return abi.encodePacked(euint8.unwrap(ticket));
     }
 
-    // Check contract balance
+    // Returns the current balance of the contract (total prize pool)
     function getBalance() external view returns (uint256) {
         return address(this).balance;
     }
 
-    // Get total participant count
+    // Returns the number of participants in the current lottery round
     function getParticipantCount() external view returns (uint256) {
         return participants.length;
     }
 
-    // Get past rounds length
+    // Returns the total number of past lottery rounds that have been completed
     function getPastRoundsLength() external view returns (uint256) {
         return pastRounds.length;
     }
 
-    // Get past round details
+    // Returns detailed information about a specific past lottery round
+    // @param _roundIndex: The index of the past round to query
+    // @return winner: Address of the winner
+    // @return prize: Prize amount for that round
+    // @return drawTime: Timestamp when the draw occurred
+    // @return claimed: Whether the prize has been claimed
     function getPastRound(
         uint256 _roundIndex
     ) external view returns (address, uint256, uint256, bool) {
